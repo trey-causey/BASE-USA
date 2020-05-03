@@ -1,0 +1,245 @@
+HTTP/2 200 
+server: nginx/1.16.1
+content-type: application/ld+json
+access-control-allow-origin: *
+x-server-id: vm-lnx-nids-apiapp6.ncep.noaa.gov
+x-correlation-id: 72d12d63-c10a-4aa2-896c-64a22238ca72
+x-request-id: 72d12d63-c10a-4aa2-896c-64a22238ca72
+cache-control: public, max-age=898, s-maxage=120
+expires: Mon, 20 Apr 2020 23:34:27 GMT
+date: Mon, 20 Apr 2020 23:19:29 GMT
+content-length: 9321
+vary: Accept,Feature-Flags
+strict-transport-security: max-age=31536000 ; includeSubDomains ; preload
+
+{
+    "@context": {
+        "wx": "https://api.weather.gov/ontology#",
+        "geo": "http://www.opengis.net/ont/geosparql#",
+        "unit": "http://codes.wmo.int/common/unit/",
+        "@vocab": "https://api.weather.gov/ontology#"
+    },
+    "geometry": "GEOMETRYCOLLECTION(POINT(-122.0386702 37.3323926),POLYGON((-122.0552226 37.3411073,-122.0496634 37.3192492,-122.0221205 37.323676,-122.0276743 37.3455345,-122.0552226 37.3411073)))",
+    "updated": "2020-04-20T22:01:49+00:00",
+    "units": "us",
+    "forecastGenerator": "BaselineForecastGenerator",
+    "generatedAt": "2020-04-20T23:19:29+00:00",
+    "updateTime": "2020-04-20T22:01:49+00:00",
+    "validTimes": "2020-04-20T16:00:00+00:00/P7DT9H",
+    "elevation": {
+        "value": 74.066400000000002,
+        "unitCode": "unit:m"
+    },
+    "periods": [
+        {
+            "number": 1,
+            "name": "This Afternoon",
+            "startTime": "2020-04-20T16:00:00-07:00",
+            "endTime": "2020-04-20T18:00:00-07:00",
+            "isDaytime": true,
+            "temperature": 65,
+            "temperatureUnit": "F",
+            "temperatureTrend": "falling",
+            "windSpeed": "8 mph",
+            "windDirection": "WNW",
+            "icon": "https://api.weather.gov/icons/land/day/few?size=medium",
+            "shortForecast": "Sunny",
+            "detailedForecast": "Sunny. High near 65, with temperatures falling to around 63 in the afternoon. West northwest wind around 8 mph."
+        },
+        {
+            "number": 2,
+            "name": "Tonight",
+            "startTime": "2020-04-20T18:00:00-07:00",
+            "endTime": "2020-04-21T06:00:00-07:00",
+            "isDaytime": false,
+            "temperature": 48,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "3 to 7 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/night/sct?size=medium",
+            "shortForecast": "Partly Cloudy",
+            "detailedForecast": "Partly cloudy, with a low around 48. Northwest wind 3 to 7 mph."
+        },
+        {
+            "number": 3,
+            "name": "Tuesday",
+            "startTime": "2020-04-21T06:00:00-07:00",
+            "endTime": "2020-04-21T18:00:00-07:00",
+            "isDaytime": true,
+            "temperature": 69,
+            "temperatureUnit": "F",
+            "temperatureTrend": "falling",
+            "windSpeed": "2 to 9 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/day/few?size=medium",
+            "shortForecast": "Sunny",
+            "detailedForecast": "Sunny. High near 69, with temperatures falling to around 66 in the afternoon. Northwest wind 2 to 9 mph."
+        },
+        {
+            "number": 4,
+            "name": "Tuesday Night",
+            "startTime": "2020-04-21T18:00:00-07:00",
+            "endTime": "2020-04-22T06:00:00-07:00",
+            "isDaytime": false,
+            "temperature": 49,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 9 mph",
+            "windDirection": "WNW",
+            "icon": "https://api.weather.gov/icons/land/night/few?size=medium",
+            "shortForecast": "Mostly Clear",
+            "detailedForecast": "Mostly clear, with a low around 49. West northwest wind 2 to 9 mph."
+        },
+        {
+            "number": 5,
+            "name": "Wednesday",
+            "startTime": "2020-04-22T06:00:00-07:00",
+            "endTime": "2020-04-22T18:00:00-07:00",
+            "isDaytime": true,
+            "temperature": 76,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 9 mph",
+            "windDirection": "WNW",
+            "icon": "https://api.weather.gov/icons/land/day/sct?size=medium",
+            "shortForecast": "Mostly Sunny",
+            "detailedForecast": "Mostly sunny, with a high near 76. West northwest wind 2 to 9 mph."
+        },
+        {
+            "number": 6,
+            "name": "Wednesday Night",
+            "startTime": "2020-04-22T18:00:00-07:00",
+            "endTime": "2020-04-23T06:00:00-07:00",
+            "isDaytime": false,
+            "temperature": 55,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "3 to 9 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/night/sct?size=medium",
+            "shortForecast": "Partly Cloudy",
+            "detailedForecast": "Partly cloudy, with a low around 55."
+        },
+        {
+            "number": 7,
+            "name": "Thursday",
+            "startTime": "2020-04-23T06:00:00-07:00",
+            "endTime": "2020-04-23T18:00:00-07:00",
+            "isDaytime": true,
+            "temperature": 76,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "3 to 9 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/day/sct?size=medium",
+            "shortForecast": "Mostly Sunny",
+            "detailedForecast": "Mostly sunny, with a high near 76."
+        },
+        {
+            "number": 8,
+            "name": "Thursday Night",
+            "startTime": "2020-04-23T18:00:00-07:00",
+            "endTime": "2020-04-24T06:00:00-07:00",
+            "isDaytime": false,
+            "temperature": 54,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 9 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/night/few?size=medium",
+            "shortForecast": "Mostly Clear",
+            "detailedForecast": "Mostly clear, with a low around 54."
+        },
+        {
+            "number": 9,
+            "name": "Friday",
+            "startTime": "2020-04-24T06:00:00-07:00",
+            "endTime": "2020-04-24T18:00:00-07:00",
+            "isDaytime": true,
+            "temperature": 80,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 8 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/day/few?size=medium",
+            "shortForecast": "Sunny",
+            "detailedForecast": "Sunny, with a high near 80."
+        },
+        {
+            "number": 10,
+            "name": "Friday Night",
+            "startTime": "2020-04-24T18:00:00-07:00",
+            "endTime": "2020-04-25T06:00:00-07:00",
+            "isDaytime": false,
+            "temperature": 55,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 8 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/night/few?size=medium",
+            "shortForecast": "Mostly Clear",
+            "detailedForecast": "Mostly clear, with a low around 55."
+        },
+        {
+            "number": 11,
+            "name": "Saturday",
+            "startTime": "2020-04-25T06:00:00-07:00",
+            "endTime": "2020-04-25T18:00:00-07:00",
+            "isDaytime": true,
+            "temperature": 81,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 7 mph",
+            "windDirection": "NW",
+            "icon": "https://api.weather.gov/icons/land/day/sct?size=medium",
+            "shortForecast": "Mostly Sunny",
+            "detailedForecast": "Mostly sunny, with a high near 81."
+        },
+        {
+            "number": 12,
+            "name": "Saturday Night",
+            "startTime": "2020-04-25T18:00:00-07:00",
+            "endTime": "2020-04-26T06:00:00-07:00",
+            "isDaytime": false,
+            "temperature": 54,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 7 mph",
+            "windDirection": "WNW",
+            "icon": "https://api.weather.gov/icons/land/night/sct?size=medium",
+            "shortForecast": "Partly Cloudy",
+            "detailedForecast": "Partly cloudy, with a low around 54."
+        },
+        {
+            "number": 13,
+            "name": "Sunday",
+            "startTime": "2020-04-26T06:00:00-07:00",
+            "endTime": "2020-04-26T18:00:00-07:00",
+            "isDaytime": true,
+            "temperature": 78,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 7 mph",
+            "windDirection": "WNW",
+            "icon": "https://api.weather.gov/icons/land/day/sct?size=medium",
+            "shortForecast": "Mostly Sunny",
+            "detailedForecast": "Mostly sunny, with a high near 78."
+        },
+        {
+            "number": 14,
+            "name": "Sunday Night",
+            "startTime": "2020-04-26T18:00:00-07:00",
+            "endTime": "2020-04-27T06:00:00-07:00",
+            "isDaytime": false,
+            "temperature": 52,
+            "temperatureUnit": "F",
+            "temperatureTrend": null,
+            "windSpeed": "2 to 7 mph",
+            "windDirection": "WNW",
+            "icon": "https://api.weather.gov/icons/land/night/sct?size=medium",
+            "shortForecast": "Partly Cloudy",
+            "detailedForecast": "Partly cloudy, with a low around 52."
+        }
+    ]
+}

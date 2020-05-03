@@ -1,0 +1,21 @@
+HTTP/2 200 
+server: nginx/1.16.1
+content-type: application/ld+json
+last-modified: Mon, 20 Apr 2020 23:18:40 GMT
+access-control-allow-origin: *
+x-server-id: vm-lnx-nids-apiapp6.ncep.noaa.gov
+x-correlation-id: b73b7866-6468-41a7-b1c9-d27341a269fb
+x-request-id: b73b7866-6468-41a7-b1c9-d27341a269fb
+cache-control: public, max-age=30, s-maxage=30
+expires: Mon, 20 Apr 2020 23:21:23 GMT
+date: Mon, 20 Apr 2020 23:20:53 GMT
+content-length: 169
+vary: Accept,Feature-Flags
+strict-transport-security: max-age=31536000 ; includeSubDomains ; preload
+
+{
+    "@context": null,
+    "@graph": [],
+    "title": "current watches, warnings, and advisories for 37.2267 N, 121.974 W",
+    "updated": "2020-04-20T23:18:40+00:00"
+}

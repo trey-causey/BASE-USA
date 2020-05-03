@@ -1,0 +1,34 @@
+Script characteristics on last page load:
+Last update: Thu 04-23-2020 19:15 EDT
+nws-alerts.php - V1.43 - 14-May-2019
+8 unique Zone entries found. Zones='CAZ513,CAC085,TNZ099,TNC065,CAZ529,CAC087,GAZ004,GAC313'
+cache age 42004 seconds - fetch needed
+Cron job not used
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=CAZ513&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.302 conn=0.375 pxfer=0.546 get=0.352 total=0.898 secs
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=CAC085&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.003 conn=0.088 pxfer=0.266 get=0.332 total=0.598 secs
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=TNZ099&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.003 conn=0.070 pxfer=0.240 get=0.342 total=0.582 secs
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=TNC065&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.003 conn=0.090 pxfer=0.201 get=0.318 total=0.518 secs
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=CAZ529&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.003 conn=0.069 pxfer=0.194 get=0.361 total=0.555 secs
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=CAC087&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.003 conn=0.063 pxfer=0.180 get=0.372 total=0.553 secs
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=GAZ004&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.003 conn=0.067 pxfer=0.195 get=0.339 total=0.534 secs
+XML source: https://alerts.weather.gov/cap/wwaatmget.php?x=GAC313&y=1
+HTTP stats:  RC=200 dest=23.54.148.18 port=443 (from sce=192.168.43.185)
+      Times: dns=0.003 conn=0.070 pxfer=0.231 get=0.348 total=0.579 secs
+Cache file updated: Thu 04-23-2020 7:15 pm
+Alert box data file updated
+Icon data file updated
+Total process time: 4.8931 seconds

@@ -1,0 +1,34 @@
+#!/bin/bash
+# cron job to get 'yesterday' data for WLCOM plugin
+# Version 1.00 - 22-Apr-2017 - initial release
+# 
+# Note: customize the settings below for your site's specific paths/names
+# use a cron job to run this script like:
+# 58 * * * * bash "$HOME/httpdocs/cron-yday.txt"
+#
+# after editing this file, make sure that Unix line endings (LF) are used and
+# NOT DOS line endings (CR LF).  Use Notepad++ to edit the file in Windows.
+#
+# --- begin settings
+HDIR="$HOME/httpdocs"
+SCRIPT=saveYesterday.php
+URL="http://your.website.com/$SCRIPT"
+PHPcmd=/usr/bin/php
+CURLcmd=/usr/bin/curl
+USECMD=PHP
+#USECMD=CURL
+# --- end settings
+cd $HDIR
+
+LOGFILE=$HDIR/cache/LOG_$SCRIPT.txt
+
+# Use one or the other .. direct is prefered over curl
+if [ "$USECMD" == "PHP" ]
+then
+  $PHPcmd -q $SCRIPT >> $LOGFILE  2> /dev/null
+fi
+if [ "$USECMD" == "CURL" ]
+then
+  $CURLcmd -s $URL >> $LOGFILE
+fi
+#

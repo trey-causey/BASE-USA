@@ -1,0 +1,6 @@
+
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/sitejsvh/weather.sitesystemhub.com/
+    - /bin/cp -r * $DEPLOYPATH

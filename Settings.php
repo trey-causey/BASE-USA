@@ -29,6 +29,7 @@
 ############################################################################
 //Version 1.01 - 28-Jul-2012 - added support for nws-alerts scripts
 //Version 1.02 - 26-Jun-2019 - update for WU satellite maps
+//Version 1.03 - 10-Jun-2020 - update for USA-regional-maps-inc.php, NWS Regional Radar maps
 $SITE 			= array();
 
 ############################################################################
@@ -100,17 +101,17 @@ $SITE['monthNames'] = array(  // for wxastronomy page .. replace with month name
 ############################################################################
 # Sitewide configuration - Station location, identity and date/time info
 ############################################################################
-//updated by tcausey 4/20/20
-$SITE['organ']			= 'Alicia\'s Weather with PHP &amp; AJAX';
-$SITE['copyr']			= '&copy; ' . gmdate("Y",time()) . ', chattweather.com';
-$SITE['location']       = 'Chattanooga, TN, USA';
-$SITE['email']			= 'mailto:sitemaster@sitesystemhub.com';
+
+$SITE['organ']			= 'USA Website with PHP &amp; AJAX';
+$SITE['copyr']			= '&copy; ' . gmdate("Y",time()) . ', Your Weather Website';
+$SITE['location']       = 'Somewhere, SomeState, USA';
+$SITE['email']			= 'mailto:somebody@somemail.org';
 # Station location: latitude, longitude, cityname
-$SITE['latitude']		= '35.025225';    //North=positive, South=negative decimal degrees
-$SITE['longitude']		= '-85.132644';  //East=positive, West=negative decimal degrees
-$SITE['cityname']		= 'Chattanooga';
-//updated from America/Los_Angeles on 4/20/20 
-$SITE['tz'] 			= 'America/Kentucky/Louisville'; //NOTE: this *MUST* be set correctly to
+$SITE['latitude']		= '37.27153397';    //North=positive, South=negative decimal degrees
+$SITE['longitude']		= '-122.02274323';  //East=positive, West=negative decimal degrees
+$SITE['cityname']		= 'Saratoga';
+
+$SITE['tz'] 			= 'America/Los_Angeles'; //NOTE: this *MUST* be set correctly to
 // translate UTC times to your LOCAL time for the displays.
 //  http://us.php.net/manual/en/timezones.php  has the list of timezone names
 //  pick the one that is closest to your location and put in $SITE['tz'] like:
@@ -158,7 +159,7 @@ $SITE['UVscript']		= 'get-UV-forecast-inc.php'; // worldwide forecast script for
 //	comment out above line to exclude UV forecast from dashboard, gizmo and wxuvforecast.php page
 //
 // if you have WXSIM installed set $SITE['WXSIM'] = true; otherwise set it to false
-$SITE['WXSIM']			= true;  // Set to false if you have not installed WXSIM
+$SITE['WXSIM']			= false;  // Set to false if you have not installed WXSIM
 $SITE['WXSIMscript'] 	= 'plaintext-parser.php'; // script for decoding plaintext.txt into icons
 $SITE['defaultlang']	= 'en';   // 'en' for English (WXSIM plaintext-parser.php)
 
@@ -175,8 +176,7 @@ $SITE['fcstorg']		= 'NWS';    // set to 'NWS' for NOAA NWS
 
 $SITE['NWSforecasts']   = array( // for the advforecast2.php V3.xx version script
 // use "Zone|Location|Point-printableURL",  as entries .. first one will be the default forecast.
-"TNZ099|Chattanooga|http://forecast.weather.gov/MapClick.php?lat=35.0431&lon=-85.1576&unit=0&lg=english&FcstType=text&TextType=2",
-"CAZ513|Saratoga|http://forecast.weather.gov/MapClick.php?CityName=Saratoga&state=CA&site=MTR&textField1=37.2639&textField2=-122.022&e=1&TextType=2",
+  "CAZ513|Saratoga|http://forecast.weather.gov/MapClick.php?CityName=Saratoga&state=CA&site=MTR&textField1=37.2639&textField2=-122.022&e=1&TextType=2",
 "CAZ513|Los Gatos|http://forecast.weather.gov/MapClick.php?CityName=Los+Gatos&state=CA&site=MTR&textField1=37.2267&textField2=-121.974&e=0&TextType=2",
 "CAZ513|Cupertino|http://forecast.weather.gov/MapClick.php?CityName=Cupertino&state=CA&site=MTR&textField1=37.3231&textField2=-122.031&e=0&TextType=2",
 "CAZ513|Sunnyvale|http://forecast.weather.gov/MapClick.php?CityName=Sunnyvale&state=CA&site=MTR&textField1=37.3689&textField2=-122.035&e=0&TextType=2",
@@ -191,8 +191,8 @@ $SITE['NWSforecasts']   = array( // for the advforecast2.php V3.xx version scrip
 // $SITE['fcstscript']	= 'plaintext-parser.php';    // WXSIM forecast (if only forecast script)
 // $SITE['fcstorg']		= 'WXSIM';    // set to 'WXSIM' for WXSIM forecast
 
-// NOAA warning zone, updated 4/20/20
-$SITE['noaazone'] 		= 'TNZ099'; // used for NOAA advisories and advforecast2.php zone forecasts
+// NOAA warning zone
+$SITE['noaazone'] 		= 'CAZ513'; // used for NOAA advisories and advforecast2.php zone forecasts
 $SITE['hurlURL']		= "wxadvisory.php"; // page to launch for details on NOAA advisories
 // 
 
@@ -203,12 +203,10 @@ $SITE['hurlURL']		= "wxadvisory.php"; // page to launch for details on NOAA advi
 // Note: additional/optional nws-alerts configuration is in nws-alerts-config.php file
 $SITE['NWSalertsCodes'] = array(
   "Santa Clara Valley|CAZ513|CAC085",
-  "Hamilton|TNZ099|TNC065",
- //"Santa Cruz Mtns|CAZ512|CAC081|CAC085|CAC087",
+//  "Santa Cruz Mtns|CAZ512|CAC081|CAC085|CAC087",
   "Santa Cruz|CAZ529|CAC087",
-  "Whitfield|GAZ004|GAC313",
 //  "Monterey|CAZ530|CAC053",
-  //"South/East Bay|CAZ508|CAC081"
+//  "South/East Bay|CAZ508|CAC081",
 //  "San Mateo Coast|CAZ509|CAC081",
 //  "San Francisco|CAZ006|CAC075"
 );
@@ -217,23 +215,28 @@ $SITE['NWSalertsSidebar'] = true; // =true to insert in menubar, =false no inser
 
 
 // Radar settings
-$SITE['noaaradar']		= 'MRX';   		// LAST 3 characters of NOAA Radar Site ID
-//updated from MUX to MRX for Knoxville, 4/20/20. No Chattanooga, TN ID
+$SITE['noaaradar']		= 'MUX';   		// LAST 3 characters of NOAA Radar Site ID
 										// e.g. Radar KMUX has $SITE['noaaradar'] = 'MUX';
-$SITE['WUregion']	= 'se';				// Wunderground regional maps
-//updated from sw to se 4/20/20
+
+$SITE['WUregion']	= 'sw';				// Wunderground regional maps
 // 'sw'=SouthWest, 'nw'=NorthWest, 'mw'=Midwest
 // 'sp'=South Central, 'ne'=North East, 'se'=South East
 
-$SITE['WUsatellite'] = 'se'; // Wunderground regional satellite maps
-//updated from sw to se 4/20/20
+$SITE['NWSregion'] = 'sw'; // NOAA/NWS regional radar maps
+// 'ak' = Alaska,
+// 'nw' = Northwest, 'nr' = Northern Rockies, 'nm' = North Mississippi Valley, 
+// 'nc' = Central Great Lakes,  'ne' = Northeast,
+// 'hi' = Hawaii,
+// 'sw' = Southwest, 'sr' = Southern Rockies, 'sc' = Southern Plains,
+// 'sm' = South Mississippi Valley, 'se' = Southeast
+
+$SITE['WUsatellite'] = 'sw'; // Wunderground regional satellite maps
 // ="nw" North West, ="nc" North Central, ="ne" North East,
 // ="wc" West Central, ="ce" Central, ="ec" East Central,
 // ="sw" South West, ="sc" South Central, ="se" South East,
 
 // GRLevel3 Radar image settings (for wxgr3radar.php and radar-status.php scripts
-//updated from kmux to kmrx 4/20/20
-$SITE['GR3radar']	= 'kmrx';	// set to lower-case full name of NEXRAD radar site
+$SITE['GR3radar']	= 'kmux';	// set to lower-case full name of NEXRAD radar site
 $SITE['GR3DIR']		= '/GR3'; 	// set to directory for GRLevel3 images (or '.' for root directory
 $SITE['GR3type']	= 'cr';		// radar image type 'cr','br','cr248','br1' etc.
 $SITE['GR3img']		= 'jpg';	// GR3 image type 'jpg' or 'png'

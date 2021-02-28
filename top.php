@@ -36,6 +36,7 @@ global	$TITLE;
 //Version  V3.02 - 23-Jul-2011 - added WXtags upload copy capability
 //Version  V3.03 - 17-Nov-2011 - added support for right-to-left presentation format
 //Version  V3.04 - 05-Feb-2013 - added support for HTML5+UTF8
+//Version  V3.05 - 13-May-2020 - fix validation for UTF8 usage
 ############################################################################
 if(isset($useUTF8) and function_exists('set_langtrans_UTF8') ) {
 	set_langtrans_UTF8(); // convert langrans items to UTF-8
@@ -103,7 +104,7 @@ if(isset($useHTML5) and $useHTML5) {
 	foreach ($tjsfile as $n => $line) {
 		print iconv($sceCharset,'UTF-8//TRANSLIT',$line);
 	}
-	print "// converted ".count($tjsfile)." lines of language-".$SITE['lang'].".js from $sceCharset to UTF-8 inline -->\n// ]]\n    </script>\n"; 
+	print "// converted ".count($tjsfile)." lines of language-".$SITE['lang'].".js from $sceCharset to UTF-8 inline -->\n// ]]>\n    </script>\n"; 
   }
 ?>
     <meta name="description" content="Personal weather station." />

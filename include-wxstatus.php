@@ -18,8 +18,11 @@
 # Version 1.06 - 22-Apr-2017 - add support for WeatherLink.com (WLCOM)
 # Version 1.07 - 09-Jan-2018 - fixes for WeatherLink.com V2.0 (WLCOM-plugin)
 # Version 1.08 - 26-Feb-2018 - add support for ambientweather.net (AWN-plugin)
+# Version 1.09 - 24-Apr-2020 - add quiet checking for updates to template scripts
+# Version 1.10 - 16-May-2020 - move version checking to wxstatus.php after custom checks
+# Version 1.11 - 16-May-2020 - readd Meteobridge support which was inadvertantly removed
 ############################################################################
-$WXSIVer = 'include-wxstatus.php - V1.08 - 26-Feb-2018';
+$WXSIVer = 'include-wxstatus.php - V1.11 - 16-May-2020';
 //--self downloader --
 if(isset($_REQUEST['sce']) and strtolower($_REQUEST['sce']) == 'view') {
    $filenameReal = __FILE__;
@@ -44,6 +47,10 @@ print "<!-- $WXSIVer -->\n";
   }
   if($SITE['WXsoftware'] == 'MH' and isset($SITE['clientrawFile'])) {
 	do_check($SITE['WXsoftwareLongName']." ".langtransstr("realtime"),$SITE['clientrawFile'],60+30,'file');
+  }
+  if($SITE['WXsoftware'] == 'MB' and isset($SITE['realtimefile'])) {
+	do_check($SITE['WXsoftwareLongName']." ".langtransstr("realtime"),
+	  $SITE['realtimefile'],30+10,'file');
   }
   if($SITE['WXsoftware'] == 'VWS' and isset($SITE['wflashdir'])) {
 	do_check($SITE['WXsoftwareLongName']." ".langtransstr("realtime"),$SITE['wflashdir'].'wflash.txt',15,'file');
@@ -186,7 +193,7 @@ print "<!-- $WXSIVer -->\n";
 	 do_check(langtransstr("Nexstorm Data file"),$nxDir.'nexstorm_arc.dat',10*60+15,'file');
   
   }
- 
+	 
 print "<!-- end include-wxstatus.php -->\n";
 
 // Functions used on this page

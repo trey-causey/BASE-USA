@@ -11,6 +11,7 @@
 // Version 1.06 - 18-Feb-2011 - added support for comma decimal point in returned UVfcstUVI array
 // Version 1.07 - 30-Mar-2011 - added support for date formatting
 // Version 1.08 - 11-Nov-2017 - switch to curl for fetch, fix notice errata
+// Version 1.09 - 12-Feb-2021 - switch to https for temis.nl access
 //
 // error_reporting(E_ALL); // uncomment for error checking
 // this script is designed to be used by
@@ -36,7 +37,7 @@
   $cacheFileDir = './';      // default cache file directory
   $myLat = '37.27153397';    //North=positive, South=negative decimal degrees
   $myLong = '-122.02274323';  //East=positive, West=negative decimal degrees
-  $ourTZ = "America/Los Angeles";  //NOTE: this *MUST* be set correctly to
+  $ourTZ = "America/Los_Angeles";  //NOTE: this *MUST* be set correctly to
 // translate UTC times to your LOCAL time for the displays.
 //  http://us.php.net/manual/en/timezones.php  has the list of timezone names
 //  pick the one that is closest to your location and put in $ourTZ like:
@@ -46,7 +47,7 @@
   $dateOnlyFormat = 'd M Y'; // dd MON YYYY
 // -------------End Settings -----------------------------
 //
-$UVversion = 'get-UV-forecast-inc.php V1.08 - 11-Nov-2017';
+$UVversion = 'get-UV-forecast-inc.php V1.09 - 12-Feb-2021';
 // the following note is required by agreement with the authors of the website www.temis.nl
 /* -----------------------------------------------------------------------------------------
 Date: Wed, 20 Feb 2008 11:30:43 +0100
@@ -84,7 +85,7 @@ if(isset($SITE['dateOnlyFormat']))   {$dateOnlyFormat = $SITE['dateOnlyFormat'];
 $myLat = round($myLat,4);
 $myLong = round($myLong,4);
 //
-$UV_URL = "http://www.temis.nl/uvradiation/nrt/uvindex.php?lon=$myLong&lat=$myLat";
+$UV_URL = "https://www.temis.nl/uvradiation/nrt/uvindex.php?lon=$myLong&lat=$myLat";
 //
 // create a 'uv-forecast.txt' file in the same directory as the script.
 // you may have to set the permissions on the file to '666' so it is writable

@@ -33,6 +33,8 @@
 //Version - 1.04 - 17-Nov-2011 - added translation capability to status
 //Version - 1.05 - 20-Nov-2011 - corrected check for WD clientraw.txt realtime file
 //Version - 1.06 - 21-Nov-2011 - standard checks moved to include-wxstatus.php, custom checks should be added to this page
+//Version - 1.07 - 27-Apr-2020 - replaced langtransstr() with langtrans() in heading text to show/enable translations
+//Version - 1.08 - 16-May-2020 - add version checking after custom checks for better display
 //
 require_once("Settings.php");
 require_once("common.php");
@@ -61,7 +63,7 @@ include("menubar.php");
 	global $SITE;
   ?>
    <p><?php 
-   langtransstr('This page shows the current status of the weather software used in the operation of this website.'); ?>
+   langtrans('This page shows the current status of the weather software used in the operation of this website.'); ?>
    <br/><br/>
    <?php if(isset($windowsuptime)) { ?>
   <?php langtrans('Station system up for'); ?> <b><?php print $windowsuptime; ?></b><br/>
@@ -142,13 +144,25 @@ include("menubar.php");
 
 # end of custom checks
 ############################################################################
+
+	if(file_exists('check-fetch-times.php')) {
+		$doVersionCheck = true;
+		include_once('check-fetch-times.php');
+		if(strlen($quietText) > 1) {
+			print "<tr><td colspan=\"4\" class=\"advisoryBox\">";
+			print "<strong>".langtransstr('Note: script(s) not current and need update(s)').":</strong><br/>\n";
+			print str_replace("\n","<br/>\n",$quietText);
+			print langtransstr('Use <a href="check-fetch-times.php?show=versions">this link</a> for details.')."\n";
+			print "</td></tr>\n";
+		}
+	}
 ?>
 
   </table>
   
   <?php } else { // software not defined yet ?>
   <p>&nbsp;</p>
-  <p>Weather Software not yet specified .. no status to report.</p>
+  <p><?php langtrans('Weather Software not yet specified .. no status to report.'); ?></p>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
   <p>&nbsp;</p>

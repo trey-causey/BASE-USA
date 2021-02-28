@@ -14,8 +14,9 @@
 // Version 1.06 - 05-Feb-2011 - fixed IE8+ display of $FlyoutMenuText
 // Version 1.07 - 04-Mar-2011 - fixed errata casting Strict: messages
 // Version 1.08 - 05-Feb-2013 - fixed HTML5 validation with literal quote in translation
+// Version 1.09 - 07-Dec-2020 - minor fix for PHP8.0.0
 //
-$Version = 'flyout-menu.php (ML) Version 1.08 - 05-Feb-2013';
+$Version = 'flyout-menu.php (ML) Version 1.09 - 07-Dec-2020';
 //
 // ---------- settings ------------------------------
 $MENUdef = './flyout-menu.xml'; // (relative) file location of XML menu definition file
@@ -260,8 +261,8 @@ function startElementFlyout($parser, $name, $attrs)
     global $depth,$Status,$lastDepth,$MENU,$MENUcnt,$WXsoftware;
 
     $indent = '';
-	if (! empty($depth[(integer)$parser]) ) {
-	  $j = $depth[(integer)$parser];
+	if (! @empty($depth[(integer)$parser]) ) {
+	  $j = @$depth[(integer)$parser];
 	} else {
 	  $j = 0;
 	}
@@ -333,14 +334,14 @@ function startElementFlyout($parser, $name, $attrs)
 	
 	$lastDepth = $j; // remember for next time
 	$j++;
-    $depth[(integer)$parser] = $j;
+    @$depth[(integer)$parser] = $j;
 }
 
 // called at end of particular element
 function endElementFlyout($parser, $name) 
 {
     global $depth,$Status;
-    $depth[(integer)$parser]--;
+    @$depth[(integer)$parser]--;
 }
 // end of XML_parser functions
 

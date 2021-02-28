@@ -1,4 +1,6 @@
 <?php
+//error_reporting(E_ALL);
+//ini_set('display_error','1');
 /*------------------------------------------------
 // This script is for use in USA as it retrieves information from Weather Underground
 //  for NOAA Radar sites and USA National and regional weather maps.
@@ -37,7 +39,8 @@
 //  Version 1.10 - 14-Feb-2017 -  added $CityPos10 for aux WU maps using different projections, https to WU, complete Settings.php support for Saratoga templates.
 //  Version 1.11 - 15-Feb-2017 -  fixes for Chrome, Edge, Opera browsers cross-hair cursor location code
 //  Version 1.12 - 17-Feb-2017 -  fixes for some maps now replaced on WU site
-//  Version 1.13 - 21-Feb-2017 -  fixes for map positioning  
+//  Version 1.13 - 21-Feb-2017 -  fixes for map positioning
+//  Version 1.14 - 22-May-2020 -  removed some maps as they are no longer available on weatherunderground.com  
 //
 // settings ----------------------------- */
 $imagesDir = './ajax-images/';  // directory for ajax-images+radar buttons with trailing slash
@@ -112,11 +115,11 @@ $CityPos4  =  'left: 35px; top: -324px;';
 $CityColor4 = '#FFFFFF';  // color of legend display
 
 // $CityPos5 = USA Radar/animation	 
-$CityPos5  =  'left: 45px; top: -277px;';
+$CityPos5  =  'left: 50px; top: -344px;';
 $CityColor5 = '#FFFFFF';  // color of legend display
 
 // $CityPos6 - for USA Radar Map
-$CityPos6  =  'left: 73px; top: -220px;';
+$CityPos6  =  'left: 28px; top: -317px;';
 $CityColor6 = '#FFFFFF';  // color of legend display
 
 // $CityPos7 - Regional maps (Fronts, Satellite, Wind, Jet Stream, Snow Depth, etc)
@@ -131,10 +134,9 @@ $CityColor8 = '#0000FF';  // color of legend display
 $CityPos9  =  'left: 49px; top: -326px;';
 $CityColor9 = '#FFFFFF';  // color of legend display
 
-// $CityPos10 - for New (2017) Regional maps (Fronts, Satellite, Wind, Snow Depth, etc)
-$CityPos10  =  'left: 45px; top: -279px;';
+// $CityPos10 - for Visible/IR USA Satellite
+$CityPos10  =  'left: 85px; top: -324px;';
 $CityColor10 = '#FFFFFF';  // color of legend display
-
 
 // end of settings
 //------------------------------------------------
@@ -153,12 +155,20 @@ if (isset($_REQUEST['sce']) && strtolower($_REQUEST['sce']) == 'view' ) {
    exit;
 }
 // These settings control visibility of maps that are not working on 10-Feb-2017 but may work in the future
-// Note: JetStream map has been replaced by 24hr Precip map permanently
-$doIRSatMap = false;  
+// Updated 15-May-2020 for more maps dropped/changed by WU
+$doIRSatMap = true;
+$doVisSatMap = true;  
 $doHumidityMap = false;
 $doSnowDepthMap = false;
 $doVisibilityMap = false;
 $doAirQuality = false;
+$doWind =false;
+$doTemperature = false;
+$doDewPoint = false;
+$doWindChill = false;
+$doHeatIndex = false;
+$doUVmap = false;
+$doPrecipMap = false;
 // end of non-working maps on WU site
 /*
 // for testing only:
@@ -169,7 +179,7 @@ $doVisibilityMap = true;
 $doAirQuality = true;
 // end for testing only
 //*/
-?><!-- WU-radar-inc.php - Version 1.13 - 21-Feb-2017 - http://saratoga-weather.org/scripts-WUradar.php#WUradar --><?php
+?><!-- WU-radar-inc.php - Version 1.14 - 22-May-2020 - https://saratoga-weather.org/scripts-WUradar.php#WUradar --><?php
 
 //------------------------------------------------
 // overrides from Settings.php if available
@@ -218,7 +228,6 @@ if (isset($SITE['CityPos9']))   {$CityPos9 = $SITE['CityPos9']; }
 if (isset($SITE['CityColor9'])) {$CityColor9 = $SITE['CityColor9']; }
 if (isset($SITE['CityPos10']))   {$CityPos10 = $SITE['CityPos10']; }
 if (isset($SITE['CityColor10'])) {$CityColor10 = $SITE['CityColor10']; }
-
 // end of overrides from Settings.php if available
 
 $UTCtime = time(); // not random, but needed for URL fetches.
@@ -542,7 +551,8 @@ $MapScale = 7;
 <?php
 }
 
-//  
+//
+if ($doPrecipMap) {
 if ($Mode == "7" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // was Jet Stream, Now 24hr Precip (Jetstream not available Feb-2017)
@@ -570,6 +580,7 @@ $MapScale = 10;
 
 <?php
 }
+} // end doPrecipMap
 
 if ($Mode == "8" && $Animated == "0") {
 //-------------------------------------------------------------------------------
@@ -578,10 +589,12 @@ if ($Mode == "8" && $Animated == "0") {
 // https://icons.wxug.com/data/640x480/2xus_vi.gif
 // https://icons.wxug.com/data/640x480/2xne_vi.gif
 // https://icons.wxug.com/data/640x480/2xsw_vi_anim.gif
+// https://s.w-x.co/staticmaps/wu/wu/satvs1200_cur/conus/animate.png
 $MapScale = 10;
 ?>
 
-<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://icons.wxug.com/data/640x480/2x<?php echo $WUregion; ?>_vi.gif?id=<?php echo($UTCtime); ?>" width="640" height="480"  border="0" alt="WU Map"/> </span>
+<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://s.w-x.co/staticmaps/wu/wu/satvs1200_cur/conus/animate.png?id=<?php echo($UTCtime); ?>"
+ width="640" height="480"  border="0" alt="WU Map"/> </span>
 <span id="cityloc" style="position: relative; <?php echo $CityPos10; ?> font-size: 10pt; color:#FF0000">&bull;&nbsp;<span style="color:<?php echo $CityColor10; ?>; font-size: 9pt;"><b><?php echo $City; ?></b></span></span> 
 
 <?php
@@ -595,23 +608,24 @@ if ($Mode == "8" && $Animated == "1") {
 $MapScale = 10;
 ?>
 
-<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://icons.wxug.com/data/640x480/2x<?php echo $WUregion; ?>_vi_anim.gif?id=<?php echo($UTCtime); ?>" width="640" height="480"  border="0" alt="WU Map"/> </span>
+<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://s.w-x.co/staticmaps/wu/wu/satvs1200_cur/conus/animate.png?id=<?php echo($UTCtime); ?>" width="640" height="480"  border="0" alt="WU Map"/> </span>
 <span id="cityloc" style="position: relative; <?php echo $CityPos10; ?> font-size: 10pt; color:#FF0000">&bull;&nbsp;<span style="color:<?php echo $CityColor10; ?>; font-size: 9pt;"><b><?php echo $City; ?></b></span></span> 
 
 <?php
 }
 
-if($doIRSatMap) { // omit IR Satellite as not updating
+if($doIRSatMap) { 
 
 if ($Mode == "9" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // IR Satellite done!!
 //-------------------------------------------------------------------------------
-$MapScale = 7;
+// https://s.w-x.co/staticmaps/wu/wu/satir1200_cur/conus/animate.png
+$MapScale = 10;
 ?>
 
-<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://icons.wxug.com/data/640x480/2x<?php echo $WUregion; ?>_ir.gif?id=<?php echo($UTCtime); ?>" width="640" height="480"  border="0" alt="WU Map"/> </span>
-<span id="cityloc" style="position: relative; <?php echo $CityPos7; ?> font-size: 10pt; color:#FF0000">&bull;&nbsp;<span style="color:<?php echo $CityColor7; ?>; font-size: 9pt;"><b><?php echo $City; ?></b></span></span> 
+<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://s.w-x.co/staticmaps/wu/wu/satir1200_cur/conus/animate.png?id=<?php echo($UTCtime); ?>" width="640" height="480"  border="0" alt="WU Map"/> </span>
+<span id="cityloc" style="position: relative; <?php echo $CityPos10; ?> font-size: 10pt; color:#FF0000">&bull;&nbsp;<span style="color:<?php echo $CityColor10; ?>; font-size: 9pt;"><b><?php echo $City; ?></b></span></span> 
 
 <?php
 }
@@ -620,17 +634,18 @@ if ($Mode == "9" && $Animated == "1") {
 //-------------------------------------------------------------------------------
 // IR Satellite animated done!!
 //-------------------------------------------------------------------------------
-$MapScale = 7;
+$MapScale = 10;
 ?>
 
-<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://icons.wxug.com/data/640x480/2x<?php echo $WUregion; ?>_ir_anim.gif?id=<?php echo($UTCtime); ?>" width="640" height="480"  border="0" alt="WU Map"/> </span>
-<span id="cityloc" style="position: relative; <?php echo $CityPos7; ?> font-size: 10pt; color:#FF0000">&bull;&nbsp;<span style="color:<?php echo $CityColor7; ?>; font-size: 9pt;"><b><?php echo $City; ?></b></span></span> 
+<span style="position: relative; left: 0px; top: 0px"><img id="WUimage" src="https://s.w-x.co/staticmaps/wu/wu/satir1200_cur/conus/animate.png?id=<?php echo($UTCtime); ?>" width="640" height="480"  border="0" alt="WU Map"/> </span>
+<span id="cityloc" style="position: relative; <?php echo $CityPos10; ?> font-size: 10pt; color:#FF0000">&bull;&nbsp;<span style="color:<?php echo $CityColor10; ?>; font-size: 9pt;"><b><?php echo $City; ?></b></span></span> 
 
 
 <?php
 }
-} // omit IR satellite as not updating
+} // end $doIRSatMap
 
+if ($doWind) {
 if ($Mode == "10" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // Wind done!!
@@ -656,7 +671,9 @@ $MapScale = 10;
 
 <?php
 }
+} // end $doWind
 
+if($doTemperature) {
 if ($Mode == "11" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // Temperatures
@@ -682,6 +699,7 @@ $MapScale = 10;
 
 <?php
 }
+} // end $doTemperature
 
 if ($doHumidityMap) { // Humidity may not be updating
 if ($Mode == "12" && $Animated == "0") {
@@ -711,6 +729,7 @@ $MapScale = 7;
 }
 } // end $doHumidityMap
 
+if($doDewPoint) { 
 if ($Mode == "13" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // Dew Point
@@ -736,7 +755,9 @@ $MapScale = 10;
 
 <?php
 }
+} // end $doDewPoint
 
+if($doHeatIndex) {
 if ($Mode == "14" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // Heat Index
@@ -762,7 +783,10 @@ $MapScale = 10;
 
 <?php
 }
+} // end $doHeatIndex
 
+if($doWindChill) {
+	
 if ($Mode == "15" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // Wind Chill
@@ -788,6 +812,7 @@ $MapScale = 10;
 
 <?php
 }
+} // end $doWindChill
 
 if($doSnowDepthMap) { // Snow Depth may not be working
 if ($Mode == "16" && $Animated == "0") {
@@ -875,6 +900,7 @@ $MapScale = 7;
 }
 } // end $doAirQuality
 
+if($doUVmap) {
 if ($Mode == "19" && $Animated == "0") {
 //-------------------------------------------------------------------------------
 // UV
@@ -900,6 +926,7 @@ $MapScale = 6;
 
 <?php
 }
+} // end doUVmap
 
 if ($Mode == "20" && $Animated == "0") {
 //-------------------------------------------------------------------------------
@@ -1136,32 +1163,49 @@ function getNada() {
     
           <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=6&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none">
 		  <span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode6HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode6HL;?>'">Fronts</span></a>&nbsp;&nbsp;&nbsp; 
-		  
+
+<?php if($doPrecipMap) { ?>			  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=7&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none">
 		  <span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode7HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode7HL;?>'">24hr Precip</span></a>&nbsp;&nbsp;&nbsp;
+<?php } /* end $doPrecipMap */ ?>
 
-		  
+<?php if($doVisSatMap) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=8&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none">
 		  <span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode8HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode8HL;?>'">Vis Sat</span></a>&nbsp;&nbsp;&nbsp; 
+<?php } /* end $doVisSatMap */ ?>		  
+
 <?php if($doIRSatMap) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=9&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode9HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode9HL;?>'">IR Sat</span></a>&nbsp;&nbsp;&nbsp; 
 <?php } /* end $doIRSatMap */ ?>		  
+
+<?php if($doWind) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=10&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode10HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode10HL;?>'">Wind</span></a>&nbsp;&nbsp;&nbsp; 
+<?php } /* end $doWind */ ?>		  
 		  
+<?php if($doTemperature) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=11&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode11HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode11HL;?>'">Temperatures</span></a>&nbsp;&nbsp;&nbsp; 
+<?php } /* end $doTemperature */ ?>		  
+
 <?php if($doHumidityMap) { ?>		  
-    
-          <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=12&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode12HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode12HL;?>'">Humidity</span></a>&nbsp;&nbsp;&nbsp; 
+       <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=12&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode12HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode12HL;?>'">Humidity</span></a>&nbsp;&nbsp;&nbsp; 
 <?php } /* end $doHumidityMap */ ?>		  
 		  
+<?php if($doDewPoint) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=13&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode13HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode13HL;?>'">Dew Point</span></a>&nbsp;&nbsp;&nbsp; <br/>
+<?php } /* end $doDewPoint */ ?>		  
 		  
+<?php if($doHeatIndex) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=14&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode14HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode14HL;?>'">Heat Index</span></a>&nbsp;&nbsp;&nbsp; 
+<?php } /* end $doHeatIndex */ ?>		  
 		  
+<?php if($doWindChill) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=15&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode15HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode15HL;?>'">Wind Chill</span></a>&nbsp;&nbsp;&nbsp; 
+<?php } /* end $doWindChill */ ?>		  
+
 <?php if($doSnowDepthMap) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=16&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode16HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode16HL;?>'">Snow Depth</span></a>&nbsp;&nbsp;&nbsp; 
 <?php } /* end $doSnowDepthMap */ ?>
+
 <?php if($doVisibilityMap) { ?>
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=17&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode17HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode17HL;?>'">Visibility</span></a>&nbsp;&nbsp;&nbsp; 
 <?php } /* end $doVisibilityMap */ ?>
@@ -1169,8 +1213,10 @@ function getNada() {
 <?php if($doAirQuality) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=18&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode18HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode18HL;?>'">Air Quality</span></a>&nbsp;&nbsp;&nbsp; 
 <?php } /* end $doAirQuality */ ?>
-	  
+
+<?php if($doUVmap) { ?>		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=19&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode19HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode19HL;?>'">UV</span></a>&nbsp;&nbsp;&nbsp; 
+<?php } /* end $doHeatIndex */ ?>		  
 		  
 		  <a href="<?php echo $PHP_SELF; ?>?<?php echo $doShow; ?>mode=20&amp;animated=<?php echo $Animated; ?>&amp;advisories=<?php echo $Advisories; ?>&amp;track=<?php echo $Track; ?>#WUtop" style="text-decoration:none"><span style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; color:<?php echo $mode20HL;?>" onmouseover="this.style.color = '#FFFF00'" onmouseout="this.style.color = '<?php echo $mode20HL;?>'">Flu</span></a>&nbsp;&nbsp;&nbsp; <br/>
       &nbsp;
@@ -1182,8 +1228,8 @@ function getNada() {
 Radar and map images courtesy of <a href="https://www.wunderground.com/" style="color:#FFFF00">Weather Underground</a>.<br/>
 <br/>
 <span style="font-size:x-small;">Thanks to Tom at <a href="http://carterlake.org/" style="color:#FFFF00"><b>Carter Lake</b></a>,
-Jim at <a href="http://jcweather.us/" style="color:#FFFF00">Juneau County Weather</a> and Ken at 
-<a href="http://saratoga-weather.org/" style="color:#FFFF00"><b>Saratoga-Weather</b></a> for the display script for this page.</span>
+Jim at <a href="https://jcweather.us/" style="color:#FFFF00">Juneau County Weather</a> and Ken at 
+<a href="https://saratoga-weather.org/" style="color:#FFFF00"><b>Saratoga-Weather</b></a> for the display script for this page.</span>
  </td>
  </tr>
 </table>
@@ -1272,7 +1318,7 @@ print <<<EOF_SETTINGS
 \$SITE['CityPos9'] = '$CityPos9';
 \$SITE['CityColor9'] = '$CityColor9';  // color of legend display
 
-// \$CityPos10 - for New (2017) Regional maps (Fronts, Satellite, Wind, Snow Depth, etc)
+// \$CityPos10 - for Visible/IR Satellite
 \$SITE['CityPos10'] = '$CityPos10';
 \$SITE['CityColor10'] = '$CityColor10';  // color of legend display
 

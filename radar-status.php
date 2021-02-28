@@ -18,16 +18,17 @@
 //  Version 1.14 - 24-Sep-2016 - fixes for NWS page design changes
 //  Version 1.15 - 22-Feb-2017 - use cURL for URL fetch+improved debugging info
 //  Version 1.16 - 04-Feb-2019 - use https for radar3pub.ncep.noaa.gov
+//  Version 1.17 - 22-May-2020 - update to allow use with wxnwsradar script set
 
-    $Version = "radar-status.php V1.16 - 04-Feb-2019";
+    $Version = "radar-status.php V1.17 - 22-May-2020";
 //  error_reporting(E_ALL);  // uncomment to turn on full error reporting
-// script available at http://saratoga-weather.org/scripts.php
+// script available at https://saratoga-weather.org/scripts.php
 //  
 // you may copy/modify/use this script as you see fit,
 // no warranty is expressed or implied.
 //
 // Customized for: NOAA radar status from
-//   http://weather.noaa.gov/monitor/radar/
+//   https://weather.noaa.gov/monitor/radar/
 //
 //
 // output: creates XHTML 1.0-Strict HTML page (default)
@@ -120,6 +121,12 @@ if (isset($_REQUEST['nexrad']) ) { // for testing
   $myRadar = substr(strtoupper($_REQUEST['nexrad']),0,4);
 }
 
+if (isset($statRadar)) { // for include in wxnwsradar script
+  $myRadar = $statRadar; // use current radar in wxnwsradar scripts
+	$includeMode = true;   // force include mode
+	$noMsgIfActive = true; // suppress message if active
+}
+
 if (isset($_REQUEST['cache'])) {$refetchSeconds = 1; }
 
 $myRadar = strtoupper($myRadar);
@@ -143,7 +150,9 @@ if (! $includeMode) {
 
 // ------------- code starts here -------------------
 echo "<!-- $Version -->\n";
-
+if(isset($statRadar)) {
+		print "<!-- statRadar='$myRadar' used as myRadar -->\n";
+}
 // refresh cached copy of page if needed
 // fetch/cache code by Tom at carterlake.org
 $cacheName = $cacheFileDir . $cacheName;
@@ -397,11 +406,12 @@ WILL RESUME WITH THEIR PROCESSES ON MONDAY.
 */
 
 // Output the status
-
+  $divStarted = false;
   if (isset($statColor) and (!$noMsgIfActive or $statColor != '#33FF33') ) {
   print "<div $boxStyle>\n";
+	$divStarted = true;
   $pAge = ($showHMSAge)?sec2hmsRS($age)." h:m:s":"$age secs";
-  print "<p>NEXRAD Radar $myRadar status: <span style=\"background-color: $statColor; padding: 0 5px;\">$curStatus</span> [last data $pAge ago] as of $LCLdate</p>\n";
+  print "<p>NEXRAD Radar $myRadar status: <span style=\"background-color: $statColor; padding: 0 5px;\">$curStatus</span> [last data $pAge ago]<br/>as of $LCLdate</p>\n";
   
   if (isset($radarMsgs[$myRadar])) {
      foreach ($radarMsgs[$myRadar] as $timestamp => $msg) {
@@ -415,7 +425,6 @@ WILL RESUME WITH THEIR PROCESSES ON MONDAY.
   
   $niceFileName = preg_replace('!&!is','&amp;',$fileName);
   print "<p><small><a href=\"$niceFileName\">NWS WSR-88D Transmit/Receive Status</a></small></p>\n";
-  print "</div>\n";
   } // end suppress if radar active and $noMsgIfActive == true
  elseif (isset($statColor) ){
  
@@ -432,7 +441,7 @@ WILL RESUME WITH THEIR PROCESSES ON MONDAY.
   } else {
 	 print "<p>NEXRAD radar $myRadar status not found.</p>\n";
   }
-
+	if($divStarted) { print "</div>\n"; }
 
 // print footer of page if needed    
 // --------------- customize HTML if you like -----------------------

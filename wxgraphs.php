@@ -31,14 +31,86 @@
 //Version 1.02 - 24-Mar-2012 - added WeatherCat support
 //Version 1.03 - 03-Jul-2012 - added wview support
 //Version 1.04 - 16-Feb-2013 - added Cumulus solar/uv graph displays
+//Version 1.05 - 13-May-2020 - added CumulusMX graphs support (requires cumx/ library files)
+//Version 1.06 - 14-May-2020 - fixed Notice errata
 require_once("Settings.php");
 require_once("common.php");
 ############################################################################
 $TITLE= $SITE['organ'] . " - " . langtransstr("Trend Graphs");
 $showGizmo = true;  // set to false to exclude the gizmo
+if(isset($SITE['WXtags']) and file_exists($SITE['WXtags'])) {
+	include_once($SITE['WXtags']);
+}
+if($SITE['WXsoftware'] == 'CU' and substr($wdversion,0,1) !== '1') { 
+  $useUTF8 = true; // must use UTF-8 due to embedded degree sign in highchart legends
+}
 include("top.php");
 ############################################################################
 ?>
+<?php if($SITE['WXsoftware'] == 'CU' and substr($wdversion,0,1) !== '1') { // Cumulus MX highchart graph styling 
+	print "<!-- begin CumulusMX setup -->\n";
+?>
+<style type="text/css">
+    #chartcontainer  {
+      min-height: 610px;
+      height: 610px;
+      margin-top:50px;
+      margin-bottom: 10px;
+      background-color:white;
+    }
+    .button {
+      -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+      -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+      box-shadow:inset 0px 1px 0px 0px #ffffff;
+      background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #e9e9e9) );
+      background:-moz-linear-gradient( center top, #f9f9f9 5%, #e9e9e9 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9');
+      background-color:#f9f9f9;
+      -webkit-border-top-left-radius:0px;
+      -moz-border-radius-topleft:0px;
+      border-top-left-radius:0px;
+      -webkit-border-top-right-radius:0px;
+      -moz-border-radius-topright:0px;
+      border-top-right-radius:0px;
+      -webkit-border-bottom-right-radius:0px;
+      -moz-border-radius-bottomright:0px;
+      border-bottom-right-radius:0px;
+      -webkit-border-bottom-left-radius:0px;
+      -moz-border-radius-bottomleft:0px;
+      border-bottom-left-radius:0px;
+      text-indent:0;
+      border:1px solid #dcdcdc;
+      display:inline-block;
+      color:#666666;
+      font-family:Arial;
+      font-size:12px;
+      font-weight:bold;
+      font-style:normal;
+      height:40px;
+      line-height:40px;
+      width:110px;
+      text-decoration:none;
+      text-align:center;
+      text-shadow:1px 1px 0px #ffffff;
+    }
+    .button:hover {
+      background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #e9e9e9), color-stop(1, #f9f9f9) );
+      background:-moz-linear-gradient( center top, #e9e9e9 5%, #f9f9f9 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e9e9e9', endColorstr='#f9f9f9');
+      background-color:#e9e9e9;
+    }
+    .button:active {
+      position:relative;
+      top:1px;
+    }
+    .td_left {
+      width: 25px;
+    }
+</style>
+<?php 
+  load_cumx_translate();
+	print "<!-- end CumulusMX setup -->\n";
+} // end cumulusMX ?>
 </head>
 <body>
 <?php
@@ -135,7 +207,7 @@ if(isset($SITE['graphImageDir'])) {$graphImageDir = $SITE['graphImageDir']; }
     <?php } // end solar/uv selection ?>
 <?php } // end VWS graph names    ?>
 
-<?php if($SITE['WXsoftware'] == 'CU') { // Cumulus graph names ?>
+<?php if($SITE['WXsoftware'] == 'CU' and substr($wdversion,0,1) == '1') { // Cumulus V1.9.4 graph names ?>
    <h2><?php echo langtransstr('Temperature') . ' / ' . langtransstr('Humidity'); ?></h2>
   <?php genImageLink('temp.png','Temperature',620,248); ?>
   <br />
@@ -381,7 +453,67 @@ print "</p>\n";
     
 <?php } // end wview graph names    ?>
 
-
+<?php if($SITE['WXsoftware'] == 'CU' and substr($wdversion,0,1) !== '1') { // Cumulus MX graph names ?>
+<?php if(strpos($SITE['CSSscreen'],'narrow') !== false) {$buttonCount = 5; } else {$buttonCount = 10;} ?>
+<table cellpadding="0" cellspacing="0" id="Graph_menu" style="margin: 0 auto">
+  <tbody>
+    <tr>
+      <td colspan="<?php echo $buttonCount; ?>"><?php langtrans('Click on a button to show the corresponding graph below.');?></td>
+    </tr>
+    <tr>
+      <td class="td_left">
+        <input name="btnTemp" class="button" tabindex="1" type="button" value="<?php langtrans('Temperature');?>" onclick="changeGraph(&quot;temp&quot;);"/>
+      </td>
+      <td class="td_left">
+        <input name="btnDailyTemp" class="button" tabindex="2" type="button" value="<?php langtrans('Daily Temp');?>" onclick="changeGraph(&quot;dailytemp&quot;);"/>
+      </td>
+      <td class="td_left">
+        <input name="btnPress" class="button" tabindex="3" type="button" value="<?php langtrans('Barometer');?>" onclick="changeGraph(&quot;press&quot;);"/>
+      </td>
+      <td class="td_left">
+        <input name="btnWind" class="button" tabindex="4" type="button" value="<?php langtrans('Wind');?>" onclick="changeGraph(&quot;wind&quot;);"/>
+      </td>
+      <td class="td_left">
+        <input name="btnWindDir" class="button" tabindex="5" type="button" value="<?php langtrans('Wind Direction');?>" onclick="changeGraph(&quot;windDir&quot;);"/>
+      </td>
+<?php if($buttonCount == 5) { ?>
+    </tr>
+    <tr>
+<?php } // end narrow new row ?>
+      <td class="td_left">
+        <input name="btnHum" class="button" tabindex="6" type="button" value="<?php langtrans('Humidity');?>" onclick="changeGraph(&quot;humidity&quot;);"/>
+      </td>
+      <td class="td_left">
+        <input name="btnRain" class="button" tabindex="7" type="button" value="<?php langtrans('Rain Today');?>" onclick="changeGraph(&quot;rain&quot;);"/>
+      </td>
+      <td class="td_left">
+        <input name="btnDailyRain" class="button" tabindex="8" type="button" value="<?php langtrans('Daily Rain Totals');?>" onclick="changeGraph(&quot;dailyrain&quot;);"/>
+      </td>
+<?php if(file_exists('solardata.json')) { ?>
+      <td class="td_left">
+        <input name="btnSolar" class="button" tabindex="9" type="button" value="<?php langtrans('Solar Radiation');?>" onclick="changeGraph(&quot;solar&quot;);"/>
+      </td>
+<?php } else { ?>
+      <td class="td_left">&nbsp;</td>
+<?php } // end if exists solardata.json ?>
+<?php if(file_exists('sunhours.json')) { ?>
+      <td class="td_left">
+        <input name="btnSunHours" class="button" tabindex="10" type="button" value="<?php langtrans('Sunshine Hours');?>" onclick="changeGraph(&quot;sunhours&quot;);"/>
+      </td>
+<?php } else { ?>
+      <td class="td_left">&nbsp;</td>
+<?php } // end if exists sunhours.json ?>
+    </tr>
+  </tbody>
+</table>
+<div id="chartcontainer"></div>
+<p><small><?php langtrans('Graphs generated by'); ?> <a href="https://www.highcharts.com/" >Highcharts.com</a> 
+<a href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons (CC) Attribution-NonCommercial licence</a></small></p>
+<script type="text/javascript" src="cumx/jquery/jquery-latest.min.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/stock/8.0/highstock.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/themes/grid.js"></script>
+<script type="text/javascript" src="cumx/cumulusmxcharts.js"></script>
+<?php } // end cumulusMX ?>
 </div><!-- end main-copy -->
 
 <?php
@@ -392,7 +524,7 @@ print "</p>\n";
 function genImageLink ( $imagename, $alttext, $width=310, $height=200) {
 	global $graphImageDir;
 	
-	if(!file_exists($graphImageDir.$imagename)) {
+	if(false and !file_exists($graphImageDir.$imagename)) {
 		print "$graphImageDir$imagename not found.";
 	} else {
 		print "<img src=\"$graphImageDir$imagename\" alt=\"$alttext\" width=\"$width\" height=\"$height\" />\n";
@@ -402,6 +534,68 @@ function genImageLink ( $imagename, $alttext, $width=310, $height=200) {
 #--------------------------------------------------------------------------
 # end genImageLink function
 #--------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------
+# function load_cumx_translate
+#--------------------------------------------------------------------------
+
+function load_cumx_translate() {
+	$enPhrases = array(
+  'Temperature',
+	'Dew Point',
+	'Feels like',
+	'Wind Chill',
+	'Heat Index',
+	'Indoor',
+	'Daily Temperature',
+	'Average temperature',
+	'Minimum temperature',
+	'Maximum temperature',
+	'Min',
+	'Max',
+  'Daily Temp',
+  'Barometer',
+  'Wind',
+	'Gust',
+  'Wind Direction',
+	'Bearing',
+	'Avg Bearing',
+  'Humidity',
+  'Rain Today',
+	'Rain Rate',
+	'/hr',
+	'Rain',
+	'Daily Rain Totals',
+	'Today',
+  'Solar Radiation',
+	'Theoretical Max',
+  'UV Index',
+  'Sunshine Hours',
+	// wind cardinal directions
+	'N', 'NNE', 'NE', 'ENE', 
+	'E', 'ESE', 'SE', 'SSE', 
+	'S', 'SSW', 'SW', 'WSW', 
+	'W', 'WNW', 'NW', 'NNW'
+  );
+
+  print "<script type=\"text/javascript\">\n";
+	print "// <![CDATA[ \n";
+	print "// language lookup for cumulusmxgraphs.js\n";
+	print "var cumxLang = new Array;\n";
+	foreach ($enPhrases as $n => $english) {
+		
+		print " cumxLang['$english'] = '".str_replace("'","\'",langtransstr($english))."';\n";
+	}
+	$winds = array(); 
+	
+	print "// ]]>\n";
+	print "</script>\n";
+	
+}
+#--------------------------------------------------------------------------
+# function load_cumx_translate
+#--------------------------------------------------------------------------
+
 
 ############################################################################
 include("footer.php");

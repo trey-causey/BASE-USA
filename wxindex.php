@@ -30,6 +30,7 @@
 //Version 1.01 - 28-Jul-2012 - integrated support for nws-alerts scripts
 //Version 1.02 - 22-Apr-2017 - updated WU map links
 //Version 1.03 - 26-Jun-2019 - updated WU map links
+//Version 1.04 - 10-Jun-2020 - use NWS radar map instead of WU - add USA-regional-maps-inc.php
 require_once("Settings.php");
 require_once("common.php");
 ############################################################################
@@ -80,17 +81,7 @@ $useTopWarning = true;  // set to true to use only the rss-top-warning script
 <div class="column-dark">
 <div align="center">
   <br/>
-  <table width="99%" style="border: none">
-  <tr><td align="center">
-    <img src="https://icons.wunderground.com/data/640x480/<?php echo $SITE['WUregion']; ?>_rd_anim.gif" alt="Regional Radar" width="320" height="240" style="margin: 0px; padding: 0px; border: none" />
-  </td>
-  <td align="center">
-    <img src="https://s.w-x.co/staticmaps/wu/wu/satir1200_cur/usa<?php echo $SITE['WUsatellite']; ?>/animate.png" alt="Regional Infrared Satellite"  
-      width="320" height="240" style="margin: 0px; padding: 0px; border: none" />  </td>
-  </td>
-  </tr>
-  <tr><td colspan="2" align="center"><small>Radar/Satellite images courtesy of <a href="http://www.weatherunderground.com">Weather Underground</a>.</small></td></tr>
-  </table>
+<?php if(file_exists('USA-regional-maps-inc.php')) { include_once('USA-regional-maps-inc.php'); } ?>
 	<img src="<?php echo $SITE['imagesDir']; ?>spacer.gif" alt="spacer"
 	height="2" width="620" style="padding:0; margin:0; border: none" />
 	<div align="center">

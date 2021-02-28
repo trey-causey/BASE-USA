@@ -1,5 +1,5 @@
 <?php
-$Version = "check-fetch-times.php Version 1.29 - 11-Apr-2020";
+$Version = "check-fetch-times.php Version 1.40 - 26-Jan-2021";
 /*
 Utility diagnostic script to support the Saratoga-Weather.org AJAX/PHP template sets.
 
@@ -25,6 +25,13 @@ if(isset($_REQUEST['sce']) and strtolower($_REQUEST['sce']) == 'view') {
    exit;
  }
 error_reporting(E_ALL);
+if(!isset($doQuiet)) {$doQuiet = false;}
+if(isset($doVersionCheck) and $doVersionCheck) {
+	$_REQUEST['show'] = 'versions';
+	$doQuiet = true;
+}
+global $doQuiet,$quietText,$SITE;
+$quietText = ''; // for include-wxstatus display messages
 // ------------------------------------------------------------------
 if(isset($_REQUEST['show']) and preg_match('|settings|i',$_REQUEST['show'])) {
 	$toShow = array("Settings.php","Settings-weather.php","Settings-language.php");
@@ -35,24 +42,24 @@ if(isset($_REQUEST['show']) and preg_match('|settings|i',$_REQUEST['show'])) {
 	    printHeaders(); 
 		$doneHeaders = true;
 		printInfo(); 
-	    print "<h2>Contents of Settings files</h2>\n";
+	    print "</p>\n<h2>Contents of Settings files</h2>\n";
 	  }
 	  if(file_exists($showFilename)) {
 		  print "<h3>$showFilename</h3>\n";
-		  print "<pre style=\"border: 1px solid black;\">\n";
 		  if($doHighlight) { 
 		    highlight_file_num($showFilename);
 		  } else {
-			$flines = file($showFilename);
-			$num = 1;
-			foreach ($flines as $n => $line) {
-				$line = preg_replace('|<\?php|i','<&#63;php',$line);
-				$pnum = sprintf('%6d',$num);
-				print "$pnum:\t$line";
-				$num++;
-			}
+				print "<pre style=\"border: 1px solid black;\">\n";
+				$flines = file($showFilename);
+				$num = 1;
+				foreach ($flines as $n => $line) {
+					$line = preg_replace('|<\?php|i','<&#63;php',$line);
+					$pnum = sprintf('%6d',$num);
+					print "$pnum:\t$line";
+					$num++;
+				}
+				print "</pre>\n<hr/>\n";
 		  }
-		  print "</pre>\n<hr/>\n";
 	  } else {
 		  // print "<h2>$showFilename is not found.</h2>\n<hr/>\n";
 	  }
@@ -75,24 +82,24 @@ if(isset($_REQUEST['show']) and preg_match('|structure|i',$_REQUEST['show'])) {
 		printInfo();
 		$doneHeaders = true;
 		 
-	    print "<h2>Contents of Website Structure files</h2>\n";
+	    print "</p>\n<h2>Contents of Website Structure files</h2>\n";
 	  }
 	  if(file_exists($showFilename)) {
 		  print "<h3>$showFilename</h3>\n";
-		  print "<pre style=\"border: 1px solid black;\">\n";
 		  if($doHighlight) { 
 		    highlight_file_num($showFilename);
 		  } else {
-			$flines = file($showFilename);
-			$num = 1;
-			foreach ($flines as $n => $line) {
-				$line = preg_replace('|<\?php|i','<&#63;php',$line);
-				$pnum = sprintf('%6d',$num);
-				print "$pnum:\t$line";
-				$num++;
-			}
+				print "<pre style=\"border: 1px solid black;\">\n";
+				$flines = file($showFilename);
+				$num = 1;
+				foreach ($flines as $n => $line) {
+					$line = preg_replace('|<\?php|i','<&#63;php',$line);
+					$pnum = sprintf('%6d',$num);
+					print "$pnum:\t$line";
+					$num++;
+				}
+				print "</pre>\n<hr/>\n";
 		  }
-		  print "</pre>\n<hr/>\n";
 	  } else {
 		  // print "<h2>$showFilename is not found.</h2>\n<hr/>\n";
 	  }
@@ -137,24 +144,24 @@ if(isset($_REQUEST['show']) and preg_match('|wx|i',$_REQUEST['show'])) {
 		printInfo();
 		$doneHeaders = true;
 		 
-	    print "<h2>Contents of Weather Data files</h2>\n";
+	    print "</p>\n<h2>Contents of Weather Data files</h2>\n";
 	  }
 	  if(file_exists($showFilename)) {
 		  print "<h3>$showFilename</h3>\n";
-		  print "<pre style=\"border: 1px solid black;\">\n";
 		  if($doHighlight) { 
 		    highlight_file_num($showFilename);
 		  } else {
-			$flines = file($showFilename);
-			$num = 1;
-			foreach ($flines as $n => $line) {
-				$line = preg_replace('|<\?php|i','<&#63;php',$line);
-				$pnum = sprintf('%6d',$num);
-				print "$pnum:\t$line";
-				$num++;
-			}
+				print "<pre style=\"border: 1px solid black;\">\n";
+				$flines = file($showFilename);
+				$num = 1;
+				foreach ($flines as $n => $line) {
+					$line = preg_replace('|<\?php|i','<&#63;php',$line);
+					$pnum = sprintf('%6d',$num);
+					print "$pnum:\t$line";
+					$num++;
+				}
+				print "</pre>\n<hr/>\n";
 		  }
-		  print "</pre>\n<hr/>\n";
 	  } else {
 		  // print "<h2>$showFilename is not found.</h2>\n<hr/>\n";
 	  }
@@ -238,7 +245,7 @@ if(isset($_REQUEST['show']) and strtolower($_REQUEST['show']) == 'info') {
 		)
 		*/
 		
-			print "cURL version: <strong>".$version['version']."</strong><br/>\n";
+			print "<p>cURL version: <strong>".$version['version']."</strong><br/>\n";
 			if(isset($version['ssl_version'])) {
 				print "cURL SSL version: <strong>".$version['ssl_version']."</strong><br/>\n";
 			} else {
@@ -270,7 +277,7 @@ if(isset($_REQUEST['show']) and strtolower($_REQUEST['show']) == 'info') {
 	
 		print "</p>\n";
 	 } else {
-		print "<h2>cURL functions are not found (but REQUIRED)</h2>\n";
+		print "<h2>cURL functions are not found (but are REQUIRED)</h2>\n";
 }
 
   	
@@ -310,7 +317,7 @@ if(isset($_REQUEST['show']) and strtolower($_REQUEST['show']) == 'info') {
 	  $Base = 'Canada';
   }
 
-  if(isset($SITE['EUwarningURL']) or isset($SITE['fcsturlWU']) or isset($SITE['WUforecasts'])) {
+  if(isset($SITE['EUwarningURL']) or isset($SITE['fcsturlWU']) or isset($SITE['WCforecasts'])) {
 	  $Base = 'World';
   }
   
@@ -466,9 +473,9 @@ $time_init = time();
 
 if(file_exists("Settings.php")) {
   $T_start = microtime_float();
-  include("Settings.php");
+  include_once("Settings.php");
   $T_stop = microtime_float();
-  $settingsLoad = "Included Settings.php time=" . sprintf("%01.3f",round($T_stop - $T_start,3)) . " secs.\n\n";
+  $settingsLoad = "Included Settings.php time=" . sprintf("%01.3f",round($T_stop - $T_start,3)) . " secs.</p>\n\n";
 } else {
   $settingsLoad = "Unable to find Settings.php.. testing skipped.\n";
   print $settingsLoad;
@@ -488,6 +495,7 @@ printHeaders();
 if(isset($_REQUEST['show']) and strtolower($_REQUEST['show']) == 'versions') { // do Version checking
   // Template updates are all based in Pacific time in the distribution .zip files
   $ourTZ = 'America/Los_Angeles';
+	$siteTZ = date_default_timezone_get();
   # set the Timezone abbreviation automatically based on $SITE['tzname'];
   # Set timezone in PHP5/PHP4 manner
 	if (!function_exists('date_default_timezone_set')) {
@@ -500,30 +508,37 @@ if(isset($_REQUEST['show']) and strtolower($_REQUEST['show']) == 'versions') { /
   global $SITE;
   $Lang = 'en';
   $cacheFileDir = './';
+	$outputText = '';
+	include_once('Settings.php');
   
   if(isset($SITE['lang'])) {$Lang = $SITE['lang'];}
   if(isset($SITE['cacheFileDir'])) {$cacheFileDir = $SITE['cacheFileDir'];}
+	if(isset($SITE['skipMissingFilesCheck'])) {
+		$skipMissing = $SITE['skipMissingFilesCheck'];
+	} else {
+		$skipMissing = false;
+	}
 
   $templateVersionsFile = 'template-version-info.txt';
   $templateVersionsURL = 'https://saratoga-weather.org/wxtemplates/'.$templateVersionsFile;  
 
-  print $settingsLoad;
+  $outputText .= $settingsLoad;
   
   # fetch/cache template version info file from master (if available)
   $TESTURL = $templateVersionsURL;
   $CACHE = $cacheFileDir.$templateVersionsFile;
-  printInfo();
-  print "<pre>\n";  
+  $outputText .= printInfo();
+  $outputText .= "<pre>\n";  
   if (!isset($_REQUEST['force']) and file_exists($CACHE) and filemtime($CACHE) + 600 > time()) {  // 1800
-    print "..loading $CACHE for version information.\n";
+    $outputText .=  "..loading $CACHE for version information.\n";
   } else {
-	print "..fetching recent version information.\n";
+	$outputText .=  "..fetching recent version information.\n";
 	$rawhtml = fetchUrlWithoutHanging($TESTURL,false);
 	$RC = '';
 	if (preg_match("|^HTTP\/\S+ (.*)\r\n|",$rawhtml,$matches)) {
 		$RC = trim($matches[1]);
 	}
-	print "RC=$RC, bytes=" . strlen($rawhtml) . "\n";
+	$outputText .=  "RC=$RC, bytes=" . strlen($rawhtml) . "\n";
 	$i = strpos($rawhtml,"\r\n\r\n");
 	$headers = substr($rawhtml,0,$i-1);
 	$content = substr($rawhtml,$i+2);
@@ -535,20 +550,20 @@ if(isset($_REQUEST['show']) and strtolower($_REQUEST['show']) == 'versions') { /
 		$udate = trim($match[1]);
 		$budate = strtotime($udate);
 		$age = abs(time() - $budate); // age in seconds
-		print "Data age=$age sec '$udate'\n";
+		$outputText .=  "Data age=$age sec '$udate'\n";
 	}
 	  
 	if (!preg_match('| 200|',$headers)) {
-	  print "------------\nHeaders returned:\n\n$headers\n------------\n";
-	  print "\nSkipped cache write to $CACHE file.\n";
+	  $outputText .=  "------------\nHeaders returned:\n\n$headers\n------------\n";
+	  $outputText .=  "\nSkipped cache write to $CACHE file.\n";
 	} elseif ($CACHE <> '') {
 		$fp = fopen($CACHE,'w');
 		if($fp) {
 		  $write = fputs($fp, $rawhtml); 
 		  fclose($fp);
-		  print "Wrote ".strlen($rawhtml). " bytes to $CACHE successfully.\n";
+		  $outputText .=  "Wrote ".strlen($rawhtml). " bytes to $CACHE successfully.\n";
 		} else {
-		  print "Error: Unable to write to $CACHE file.\n";
+		  $outputText .=  "Error: Unable to write to $CACHE file.\n";
 		}
 	} 
 
@@ -565,7 +580,8 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
 	$nVersions = 0;
     $VFile = file($CACHE);
 	if(count($VFile) < 10) {
-		print "Error: $CACHE file is not complete..skipping testing.\n";
+		$outputText .=  "Error: $CACHE file is not complete..skipping testing.\n";
+		$quietText .= $outputText;
 		return;
 	}
 	foreach ($VFile as $n => $rec) {
@@ -576,11 +592,17 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
 		$nVersions++;
 	  }
 	}
-  print "..loaded $nVersions version descriptors from $CACHE file.\n";
+  $outputText .=  "..loaded $nVersions version descriptors from $CACHE file.<br/>\n";
  
   # end of get new template version info file
 # set of files to do version checking  
-  $templateFiles = array( 
+  $templateFiles = array(
+	
+	 'Deprecated' => array(
+	 // old files that no longer function due to source website changes
+	  'WU-forecast.php','get-nnvl-iod.php','wxnwsradar-inc.php','wxnwsradar-iframe.php',
+		'swfobject.js','wxlive.php'
+		), 
 
    'Common' => array(
 //	  'ajaxgizmo.js',
@@ -590,14 +612,16 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
 	  'include-metar-display.php','include-wxstatus.php',
 		'plaintext-parser.php','plaintext-parser-data.txt',
 		'quake-json.php','quake-json.js','quake-json.css',
-	  'thermometer.php','wxgraphs.php','wxmetar.php','wxquake.php'),
+	  'thermometer.php','wxforecast.php','wxgraphs.php','wxmetar.php','wxquake.php'),
 
   'USA' => array(
 	  'advforecast2.php','DualImage.php','atom-advisory.php','atom-top-warning.php',
 		'GR3-radar-inc.php','floatTop.js',
 	  'nws-alerts.php','nws-alerts-details-inc.php','nws-alerts-summary-inc.php',
 	  'nws-alertmap.js','nws-all-zones-inc.php','nws-alerts.css','wxnws-details.php',
-	  'radar-status.php','WU-radar-inc.php'),
+	  'radar-status.php','WU-radar-inc.php',
+		'wxnwsradar.php','hanis_min.js',
+		'USA-regional-maps-inc.php','NWS-regional-radar-animate.php'),
 
   'Canada' => array(
 	   'ec-forecast.php','ec-forecast-lookup.txt','ec-lightning.php','ec-radar.php','quake-Canada.php'),
@@ -638,6 +662,11 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
   $toCheckFiles = $templateFiles['Common'];
   $toCheckLegend = 'Common Files';
   foreach ($templateFiles['Common'] as $key => $val) {$selectedVersionsType[$val] = 'Common'; }
+
+  $toCheckFiles = array_merge($toCheckFiles,$templateFiles['Deprecated']);
+  $toCheckLegend .= ', Deprecated';
+  foreach ($templateFiles['Deprecated'] as $key => $val) {$selectedVersionsType[$val] = 'Deprecated'; }
+
   $updateBasePlugin = '';
   if(isset($SITE['fcsturlNWS']) or isset($SITE['NWSforecasts'])) {
 	  $toCheckFiles = array_merge($toCheckFiles,$templateFiles['USA']);
@@ -678,16 +707,16 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
 	  $updateBasePlugin .= ', '.$wxsftw.'-plugin';
 
   }
-  print "</pre>\n";
+  $outputText .=  "</pre>\n";
 
-  print "<h3>Version information for selected <strong>$toCheckLegend</strong> key template files</h3>\n";
-  print "<p style=\"border: 2px dotted red; background-color: #FFCC00; padding: 5px;\">";
-  print "<strong>Note</strong>: only selected key template files are checked with this script. Files with customary user modifications (Settings.php, Settings-weather.php, top.php, header.php, menubar.php, footer.php, most wx...php files, etc.) and graphics and weather tags files are NOT checked as they either do not contain version information or they are expected to be different from the distribution versions due to normal website  customization.";
+  $outputText .=  "<h3>Version information for selected <strong>$toCheckLegend</strong> key template files</h3>\n";
+  $outputText .=  "<p style=\"border: 2px dotted red; background-color: #FFCC00; padding: 5px;\">";
+  $outputText .=  "<strong>Note</strong>: only selected key template files are checked with this script. Files with customary user modifications (Settings.php, Settings-weather.php, top.php, header.php, menubar.php, footer.php, most wx...php files, etc.) and graphics and weather tags files are NOT checked as they either do not contain version information or they are expected to be different from the distribution versions due to normal website  customization.";
   
-  print "</p>\n";
+  $outputText .=  "</p>\n";
   
-  print "<table style=\"border: 1px;\" cellpadding=\"2\" cellspacing=\"2\">\n";
-  print "<tr><th>Script<br/>Origin</th><th>Script<br/>Name</th><th>Installed Script</br>Version Status</th><th>Release Script<br/>Version</th><th>Installed Script<br/>Version</th><th>Installed Script Internal<br/>Version Description</th></tr>\n";
+  $outputText .=  "<table style=\"border: 1px;\" cellpadding=\"2\" cellspacing=\"2\">\n";
+  $outputText .=  "<tr><th>Script<br/>Origin</th><th>Script<br/>Name</th><th>Installed Script<br/>Version Status</th><th>Release Script<br/>Version</th><th>Installed Script<br/>Version</th><th>Installed Script Internal<br/>Version Description</th></tr>\n";
   $earliestDate = '9999-99-99';
   
   natcasesort($toCheckFiles);
@@ -695,6 +724,7 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
   foreach ($toCheckFiles as $n => $checkFile) {
 	  if ($idx % 5 <> 0) { $TRclass = 'row-even'; } else { $TRclass = 'row-odd'; }
 	  list($mDate,$vNumber,$vDate,$vInfo,$FileMD5,$fStatus) = chk_file_version($checkFile);
+		if($vInfo == '') {continue; } // skip deprecated and not-found files
 	  $instVer = '';
 	  if($vNumber <> '' and $vDate <> '') {$instVer = "V$vNumber - $vDate"; }
 	  $distVer = '';
@@ -703,24 +733,41 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
 			explode("\t",$selectedVersions[$checkFile]);
 		 $distVer = "V$mstFversion - $mstFvDate";
 	  }
-	  $fSource = $selectedVersionsType[$checkFile];
-	  print "<tr class=\"$TRclass\"><td>$fSource</td><td><strong>$checkFile</strong></td><td>$fStatus</td><td>$distVer</td><td>$instVer</td><td>$vInfo</td></tr>\n";
+	  if(isset($selectedVersionsType[$checkFile]) ) {
+			 $fSource = $selectedVersionsType[$checkFile];
+		} else {
+			$fSource = '';
+		}
+	  $outputText .=  "<tr class=\"$TRclass\"><td>$fSource</td><td><strong>$checkFile</strong></td><td>$fStatus</td><td>$distVer</td><td>$instVer</td><td>$vInfo</td></tr>\n";
+		if(strpos($fStatus,'Need update') !== false or 
+		   (!$skipMissing and (strpos($fStatus,'not installed') !== false or strpos($fStatus,'to delete') !==false) ) ) {
+			$quietText .= "$checkFile $instVer $fStatus\n";
+		}
+			 
 	  $idx++;
   }
 	  
-  print "</table>\n";	  
+  $outputText .=  "</table>\n";	  
 
   if($earliestDate <> '9999-99-99') {
 	  //found some updates
 	 $updateBasePluginDate = date('d-M-Y',strtotime($earliestDate));
-	 print "<h3>To update your template set to current script version(s), use <a href=\"http://saratoga-weather.org/wxtemplates/updates.php\"><strong>the updates tool page</strong></a> with a query set for <strong>$updateBasePluginDate</strong> for ";
-	 print "<strong>$updateBasePlugin</strong></h3>\n"; 
+	 $outputText .=  "<h3>To update your template set to current script version(s), use <a href=\"https://saratoga-weather.org/wxtemplates/updates.php\"><strong>the updates tool page</strong></a> with a query set for <strong>$updateBasePluginDate</strong> for ";
+	 $outputText .=  "<strong>$updateBasePlugin</strong></h3>\n"; 
 	  
   }
 
 
- print "<pre>\n";
+ $outputText .=  "<pre>\n";
+ date_default_timezone_set($siteTZ); // restore original timezone setting
 // end of version checking  
+
+if(!$doQuiet) { 
+  print $outputText; 
+ } else {
+	$quietText = str_replace('<br/>',' ',$quietText);
+	return;
+}
   
 } else { // do fetch file checking
 
@@ -729,12 +776,12 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
 // file fetch checking
 
   printInfo();
-  print "<h2>Checking access to key websites for your template set</h2>\n";
+  print "</p>\n<h2>Checking access to key websites for your template set</h2>\n";
 
   print '
   <p>This script will check the load times and the ability to save cache files for the included support
   scripts with your template package.</p>
-  <pre>
+  <p>
   ';
   
   print $settingsLoad;
@@ -763,7 +810,7 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
   'EUwarningURL' => 'METEOalarm warning URL|meteoalarm-LL.txt'
   );
   
-  print "<p>Using lang=$Lang as default for testing</p>\n";
+  print "<p>Using lang=$Lang as default for testing</p>\n<pre>\n";
   
   global $TOTALtime;
   $TOTALtime = $T_stop - $T_start;
@@ -871,7 +918,8 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
 				continue;
 			}
 	  }
-	  print "URL: $TESTURL\n";
+		$printURL = url_sanitize($TESTURL);
+	  print "URL: $printURL\n";
 	  if($CACHE <> '') {
 		print "Cache: $CACHE\n";
 	  }
@@ -929,25 +977,65 @@ Base-Canada	wxtrends.php	2011-01-19 11:04 PST	2914	298	2842	ff4f1a25ebeb60a130b2
   print "Elapsed $time_elapsed seconds.\n\n";
 } // end fetch-time-checking
 
+if(!$doQuiet) {
 print "PHP Version " . phpversion() . "\n";
 print "Memory post_max_size " . ini_get('post_max_size') . " bytes.\n";
 print "Memory usage " . memory_get_usage() . " bytes.\n";
 print "Memory peak usage " . memory_get_peak_usage() . " bytes.\n";
-?>
-</pre>
-<?php
-// ------------------------------------------------------------------
+print "</pre>\n";
+}
 
+if(!$doQuiet) {
+  print '
+</body>
+</html>
+';
+}
+
+// ------------------------------------------------------------------
+function url_sanitize($inurl) {
+	// replace embedded API keys, and change & to &amp; in URL args
+	$toFind = array('apiKey','client_id','client_secret');
+
+	$outurl = $inurl;
+	// special DarkSky - API key in URL itself
+	$outurl = preg_replace('!api.darksky.net/forecast/[^\/]+/!','api.darksky.net/forecast/-redacted-/',$outurl);
+	
+	$U = parse_url($inurl);
+	if(isset($U['query'])) {
+		$A = explode('&',$U['query'].'&');
+	  $newArgs = '';
+		$sep = '';
+		// print '<!-- A='.print_r($A,true)." -->\n";
+		foreach ($A as $q) { // examine and maybe replace each query arg
+			list($arg,$val) = explode('=',$q.'=');
+			if(empty($arg)) {continue;}
+			if(in_array($arg,$toFind)) {
+				$newArgs .= "$sep$arg=-redacted-";
+			} else {
+				$newArgs .= "$sep$arg=$val";
+			}
+			$sep = '&';
+		}
+		$outurl = preg_replace('!\?.*$!','?'.$newArgs,$outurl);
+	}
+	
+	$outurl = str_replace('&','&amp;',$outurl);
+	
+	return($outurl);
+}
+
+// ------------------------------------------------------------------
 function printHeaders() {
-  global $Version;
-  print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  global $Version, $doQuiet;
+  $outputText = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Saratoga-weather.org Template Test Utility</title>
 <meta http-equiv="Robots" content="noindex,nofollow,noarchive" />
 <meta name="author" content="Ken True" />
-<meta name="copyright" content="&copy; 2012, Saratoga-Weather.org" />
+<meta name="copyright" content="&copy; 2012-'.gmdate('Y').', Saratoga-Weather.org" />
 <meta name="Description" content="Saratoga-weather.org AJAX/PHP website template diagnostic utility." />
 <style type="text/css">
 .row-odd  {background-color: #96C6F5; }
@@ -977,7 +1065,11 @@ code {white-space: nowrap;
 <body style="background-color:#FFFFFF; font-family:Arial, Helvetica, sans-serif;font-size: 10pt;">
 <h3>'.$Version.'</h3>
 ';
-	
+	if(!$doQuiet) {
+		print $outputText;
+	} else {
+		return($outputText);
+	}
 }
 // ------------------------------------------------------------------
 // Retrieve information about the currently installed GD library
@@ -1034,7 +1126,8 @@ function microtime_float()
     $data = '';
     $domain = parse_url($url, PHP_URL_HOST);
     $theURL = str_replace('nocache', '?' . $overall_start, $url); // add cache-buster to URL if needed
-    $Debug.= "<!-- curl fetching '$theURL' -->\n";
+		$thePrintURL = url_sanitize($theURL);
+    $Debug.= "<!-- curl fetching '$thePrintURL' -->\n";
     $ch = curl_init(); // initialize a cURL session
     curl_setopt($ch, CURLOPT_URL, $theURL); // connect to provided URL
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // don't verify peer certificate
@@ -1208,12 +1301,22 @@ function microtime_float()
     return ($xml);
   }
 }    // end fetchUrlWithoutHanging
+
 // ------------------------------------------------------------------
 #---------------------------------------------------------  
 # load file to string for version checking
 #--------------------------------------------------------- 
 function chk_file_version($inFile) {
-   global $selectedVersions,$earliestDate;
+   global $selectedVersions,$selectedVersionsType,$earliestDate;
+	 
+	 if(isset($selectedVersionsType[$inFile]) and $selectedVersionsType[$inFile] == 'Deprecated' and file_exists($inFile)) {
+		 return(
+	  array('n/a','','',"<strong>$inFile is deprecated.</strong>",'','<strong>Ok to delete from website.</strong>')); 
+	 }
+	 if(isset($selectedVersionsType[$inFile]) and $selectedVersionsType[$inFile] == 'Deprecated' and !file_exists($inFile)) {
+		 return(
+	  array('n/a','','',"",'','')); 
+	 }
    if(!file_exists($inFile)) {
 	  return(
 	  array('n/a','','',"<strong>$inFile file not found.</strong>",'','<strong>File not installed</strong>')); 
@@ -1258,8 +1361,10 @@ function chk_file_version($inFile) {
 	 }
   
    }
+	 $vInfo = str_replace('--><?php','',$vInfo); // in case some weird stuff is in the version string
    return(array($mDate,$vNumber,$vDate,$vInfo,$FileMD5,$fStatus));
 }
+
 #---------------------------------------------------------  
 # scan for a version string in a PHP/JS/TXT file
 #---------------------------------------------------------  
@@ -1298,7 +1403,7 @@ function scan_for_version_string($input) {
 # load the to-scan array with the filenames to look for
 #---------------------------------------------------------  
 function load_selected_array($key) {
-	global $MasterVersions,$selectedVersions;
+	global $MasterVersions,$selectedVersions,$doQuiet;
 	$n = 0;
 	foreach ($MasterVersions as $k => $data) {
 		list($base,$file) = explode("\t",$k);
@@ -1308,8 +1413,12 @@ function load_selected_array($key) {
 		}
 		
 	}
-	print "..loaded $n version descriptors for $key.\n";
-	return;
+	$outputText = "..loaded $n version descriptors for $key.<br/>\n";
+	if(!$doQuiet) {
+		print $outputText;
+	} else {
+		return($outputText);
+	}
 } // end load_selected_array
 
 #---------------------------------------------------------  
@@ -1318,11 +1427,22 @@ function load_selected_array($key) {
 
 function highlight_file_num($file) 
 { 
-  $lines = implode(range(1, count(file($file))), '<br />'); 
-  $content = highlight_file($file, true); 
+  global $doQuiet;
+  $lines = implode('<br />',range(1, count(file($file)))); 
+  //$content = highlight_file($file, true); 
+  $recs = file($file);
+	$content = '';
+	foreach ($recs as $n => $rec) {
+		$content .= preg_replace('!(\$\S+(API|pw|AWNkey)\S+)\s*=\s*[\'\"]\S+[\'\"];!U',"$1 = '--redacted--'; // key not displayed ",$rec);
+	}
+  $content = highlight_string($content,true);
+  $outputText = "<table style=\"border: 1px solid black;\"><tr><td class=\"num\">\n$lines\n</td><td>\n$content\n</td></tr></table>";
+	if(!$doQuiet) {
+		print $outputText;
+	} else {
+		return($outputText);
+	}
 
-  
-    echo "<table><tr><td class=\"num\">\n$lines\n</td><td>\n$content\n</td></tr></table>";
  } 
 
 #---------------------------------------------------------  
@@ -1380,7 +1500,9 @@ function decode_permissions($perms) {
   
   return $info;
 }
+
 //--------------------------------------------------
+
 function WU_get_APIURL ($rawURL) {
 	global $WUAPIkey,$WULANG,$Debug,$doDebug;
 
@@ -1487,36 +1609,53 @@ http://api.wunderground.com/api/$WUAPIkey/forecast10day/geolookup/lang:$WULANG/q
    return('');
 	
 }
+
 //-------------------------------------------------
+
 function printInfo() {
-  print "<h2>Website PHP information</h2>\n";
-  print "<p>\n";
-  print "Webserver OS: <b>".php_uname()."</b><br/>\n";
-  print "PHP Version: <b>".phpversion()."</b><br/>\n";
-  if (version_compare(PHP_VERSION, '5.3.0', '<') ) {
-    print "<span style=\"color: red;\"><b>NOTE: some scripts require PHP 5.3+ for proper operation.</b></span><br/>\n";
+	global $doQuiet;
+  $outputText = "<h2>Website PHP information</h2>\n";
+  $outputText .= "<p>\n";
+  $outputText .= "Webserver OS: <b>".php_uname()."</b><br/>\n";
+  $outputText .= "PHP Version: <b>".PHP_VERSION."</b> built for <b>".PHP_OS."</b><br/>\n";
+  if (version_compare(PHP_VERSION, '5.6.0', '<') ) {
+    $outputText .= "<span style=\"color: red;\"><b>NOTE: some scripts require PHP 5.6+ for proper operation.</b></span><br/>\n";
   }
+  $outputText .= "PHP cmd location: <b>".PHP_BINDIR."/php</b><br/>\n";
   
-  print "Document root: <b>".$_SERVER['DOCUMENT_ROOT']."</b><br/>\n";
-  print "allow_url_fopen = <b>";
-  print ini_get("allow_url_fopen")?"ON":"off";
-  print "</b><br/>\n";
-  print "allow_url_include = <b>";
-  print ini_get("allow_url_include")?"ON":"off";
-  print "</b><br/>\n";
+  $outputText .= "Document root: <b>".$_SERVER['DOCUMENT_ROOT']."</b><br/>\n";
+  $outputText .= "Template root: <b>".__DIR__."</b><br/>\n";
+  $outputText .= "allow_url_fopen = <b>";
+  $outputText .= ini_get("allow_url_fopen")?"ON":"off";
+  $outputText .= "</b><br/>\n";
+  $outputText .= "allow_url_include = <b>";
+  $outputText .= ini_get("allow_url_include")?"ON":"off";
+  $outputText .= "</b><br/>\n";
 		$streams = stream_get_wrappers();
-	print "Stream support for <b>http</b> ";
-	print in_array('http',$streams)?'is available':'is <b>NOT available but REQUIRED.</b>';
-	print "<br/>\n";
-	print "Stream support for <b>https</b> ";
-	print in_array('https',$streams)?'is available':'is <b>NOT available but REQUIRED.</b>';
-	print "<br/>\n";
+	$outputText .= "Stream support for <b>http</b> ";
+	$outputText .= in_array('http',$streams)?'is available':'is <b>NOT available but REQUIRED.</b>';
+	$outputText .= "<br/>\n";
+	$outputText .= "Stream support for <b>https</b> ";
+	$outputText .= in_array('https',$streams)?'is available':'is <b>NOT available but REQUIRED.</b>';
+	$outputText .= "<br/>\n";
 	if(sort($streams,SORT_STRING)) {
-	  print "Streams supported: <strong>".join(', ',$streams)."</strong>";
+	  $outputText .= "Streams supported: <strong>".join(', ',$streams)."</strong><br/>";
 	}
-	print "</p>\n";
+	$xportlist = stream_get_transports();
+	if(sort($xportlist,SORT_STRING)) {
+	  $outputText .= "Socket transports: <strong>".join(', ',$xportlist)."</strong><br/>";
+	}
+	
+	$outputText .= "\n";
+
+	if(!$doQuiet) {
+		print $outputText;
+	} else {
+		return($outputText);
+	}
 
 }
+
 //-------------------------------------------------
 
 function convert_NWS_filename($inURL,$NOAAZone) {
@@ -1581,7 +1720,3 @@ function convert_NWS_filename($inURL,$NOAAZone) {
   }
    return(array('unk',$inURL));
 }
-
-?>
-</body>
-</html>

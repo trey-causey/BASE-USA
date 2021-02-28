@@ -39,7 +39,8 @@ global $forwardTrans,$reverseTrans,$missingTrans;
 # Version 1.08 - 12-Aug-2015 - fixed deprecated /e preg_replace with preg_replace_callback
 # Version 1.09 - 17-Aug-2015 - fixed HTML5 validation for print_language_selects()
 # Version 1.10 - 19-Apr-2019 - updated season/moon tables for 2018-2030 years
-$CMNVersion = 'common.php - Version 1.10 - 19-Apr-2019';
+# Version 1.11 - 07-Dec-2020 - minor fix for PHP 8.0.0
+$CMNVersion = 'common.php - Version 1.11 - 07-Dec-2020';
 # Common Functions
 ############################################################################
 
@@ -644,6 +645,7 @@ $Q3Moons = array( // unixtime values in UTC/GMT
    if ($YY==0) $YY=idate("Y");
 
    $date = mktime($hh,$mm,$ss,$MM,$DD,$YY);  // Unix date from local time
+	 $info = new STDclass;
    @$info->date = $date;
    $info->datetxt = gmdate('D, d-M-Y H:i T',$date);
    

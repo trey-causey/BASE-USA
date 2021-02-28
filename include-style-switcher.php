@@ -2,19 +2,16 @@
 /*
 PHP script by Mike Challis, www.642weather.com/weather/
 Carterlake/AJAX/PHP Template - Color Theme Switcher Plugin PHP Script
-Script available at: http://www.642weather.com/weather/scripts.php
-Contact Mike: http://www.642weather.com/weather/contact_us.php
-Live Demo: http://www.642weather.com/weather/template/
-Download: http://www.642weather.com/weather/scripts/css-theme-switcher.zip
 
-Version: 1.17  19-Dec-2008
+Version: 1.17 - 19-Dec-2008 - tweaks to initial release
 - adjustment to cookie path setting
 Version 1.18 - 10-Feb-2011 - fix duplicate id= in wide/narrow selection HTML
-Version 1.19 - 05-Feb-2013 = fix HTML5 validation issues
+Version 1.19 - 05-Feb-2013 - fix HTML5 validation issues
+Version 1.20 - 27-Apr-2020 - fix warnings if headers were already sent
 
 see changelog.txt for all change history
 
-Support comes from MCHALLIS in this topic at the Weather-Watch.com forum:
+Support comes from saratogaWX in this topic at the Weather-Watch.com forum:
 http://www.weather-watch.com/smf/index.php/topic,30183.0.html
 
 You are free to use and modify the code
@@ -347,7 +344,7 @@ function set_style_cookie ($name, $val) {
      $scripturl = preg_replace("/$scriptfilename$/i", '', $_SERVER['PHP_SELF']);
      $path = $scripturl;
    }
-   setcookie("$name",$val,$expire,$path);
+   if(!headers_sent()) {setcookie("$name",$val,$expire,$path);}
 }
 
 ?>

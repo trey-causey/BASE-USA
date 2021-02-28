@@ -29,8 +29,11 @@
 //  Version 1.25 - 22-Jan-2012 - added fix for dd.mm.yyyy format dates
 //  Version 1.26 - 12-Jan-2013 - added moonrise/set swap when moonrise is later than moonset
 //  Version 1.27 - 02-Dec-2018 - added support for DarkSky forecasts
+//  Version 1.28 - 11-Apr-2020 - added support for Aerisweather forecasts
+//  Version 1.29 - 13-May-2020 - replace WU with WC forecast capability
+//  Version 1.30 - 14-May-2020 - fix several Notice errata with PHP 7+
 //
-$ADBversion = 'ajax-dashboard.php - Version 1.27 - 02-Dec-2018 - Multilingual';
+$ADBversion = 'ajax-dashboard.php - Version 1.30 - 14-May-2020 - Multilingual';
 //error_reporting(E_ALL);
 // --- settings for standalone use --------------------------
 $Lang    = 'en';
@@ -75,6 +78,23 @@ $showSnowTemp = 4;		// display Snow instead of Rain when temp (C) is <= this tem
 $decimalComma = false;  // set to true to process numbers with a comma for a decimal point
 // --- end of settings for standalone use
 //
+if (isset($_REQUEST['sce']) && ( strtolower($_REQUEST['sce']) == 'view' or
+    strtolower($_REQUEST['sce']) == 'show') ) {
+   //--self downloader --
+   $filenameReal = __FILE__;
+   $download_size = filesize($filenameReal);
+   header('Pragma: public');
+   header('Cache-Control: private');
+   header('Cache-Control: no-cache, must-revalidate');
+   header("Content-type: text/plain");
+   header("Accept-Ranges: bytes");
+   header("Content-Length: $download_size");
+   header('Connection: close');
+   
+   readfile($filenameReal);
+   exit;
+}
+
 include_once("common.php");  // for language translation
 include_once("Settings.php"); 
 // overrides from Settings.php if available
@@ -105,22 +125,6 @@ if (isset($SITE['commaDecimal'])) 	{$commaDecimal = $SITE['commaDecimal'];}
 if (isset($SITE['fcsticonsdir'])) 	{$fcstIconDir = $SITE['fcsticonsdir'];}
 if (isset($SITE['fcsticonstype'])) 	{$condIconType = $SITE['fcsticonstype'];}
 
-if (isset($_REQUEST['sce']) && ( strtolower($_REQUEST['sce']) == 'view' or
-    strtolower($_REQUEST['sce']) == 'show') ) {
-   //--self downloader --
-   $filenameReal = __FILE__;
-   $download_size = filesize($filenameReal);
-   header('Pragma: public');
-   header('Cache-Control: private');
-   header('Cache-Control: no-cache, must-revalidate');
-   header("Content-type: text/plain");
-   header("Accept-Ranges: bytes");
-   header("Content-Length: $download_size");
-   header('Connection: close');
-   
-   readfile($filenameReal);
-   exit;
-}
 // testing parameters// testing parameters
 print "<!--  $ADBversion -->\n";
 
@@ -152,13 +156,21 @@ $SITE['fcstorg']		= 'EC';    // set to 'EC' for Environment Canada
 $fcstorg = $fcstby;
 $fcstscript = $SITE['fcstscript'];
 }
-if ($fcstby == 'WU') {
+if ($fcstby == 'WC') {
 
-$SITE['fcstscript']	= 'WU-forecast.php';    // Non-USA, Non-Canada Wunderground Forecast Script
-$SITE['fcstorg']		= 'WU';    // set to 'WU' for WeatherUnderground
+$SITE['fcstscript']	= 'WC-forecast.php';    // Non-USA, Non-Canada Wunderground/TWC Forecast Script
+$SITE['fcstorg']		= 'WU/TWC';    // set to 'WU/TWC' for WeatherUnderground/TWC
 $fcstorg = $fcstby;
 $fcstscript = $SITE['fcstscript'];
 }
+if ($fcstby == 'AW') {
+
+$SITE['fcstscript']	= 'AW-forecast.php';    // Non-USA, Non-Canada Aerisweather Forecast Script
+$SITE['fcstorg']		= 'Aerisweather';    // set to 'Aerisweather' for Aerisweather.com
+$fcstorg = $fcstby;
+$fcstscript = $SITE['fcstscript'];
+}
+
 if ($fcstby == 'WXSIM') {
 
 $SITE['fcstscript']	= 'plaintext-parser.php';    // WXSIM forecast
@@ -181,15 +193,23 @@ print "<!-- fcstby='$fcstby' fcstscript='" . $SITE['fcstscript'] . "' fcstorg='"
   $doPrintNWS = false; // suppress printing of forecast by advforecast2.php
   $doPrint    = false; // suppress printing of ec-forecast.php
   $doPrintWU  = false; // suppress printing of WU-forecast.php
+  $doPrintWC  = false; // suppress printing of WC-forecast.php
 	$doPrintDS  = false; // suppress printing of DarkSky DS-forecast.php
+	$doPrintAW  = false; // suppress printing of Aerisweather AW-forecast.php
   include_once($fcstscript); // for the forecast icon stuff
   
 // copy forecast script variables to carterlake-style names if script used is not advforecast2.php
-if ($fcstorg == 'WU') {
-  $forecasticons = $WUforecasticons;
-  $forecasttemp = $WUforecasttemp;
-  $forecasttitles = $WUforecasttitles;
-  $forecasttext = $WUforecasttext;
+if ($fcstorg == 'WU/TWC') {
+  $forecasticons = $WCforecasticons;
+  $forecasttemp = $WCforecasttemp;
+  $forecasttitles = $WCforecasttitles;
+  $forecasttext = $WCforecasttext;
+
+} else if ($fcstorg == 'Aerisweather') {
+  $forecasticons = $AWforecasticons;
+  $forecasttemp = $AWforecasttemp;
+  $forecasttitles = $AWforecasttitles;
+  $forecasttext = $AWforecasttext;
 
 } else if ($fcstorg == 'DarkSky') {
   $forecasticons = $DSforecasticons;
@@ -506,7 +526,7 @@ document.write('<b> - <?php langtrans('updated'); ?> <span id="ajaxcounter"></sp
 				  <span class="ajax" id="ajaxwindiconwr">
 				  <?php $wr = $imagesDir . $wrName . $dirlabel . $wrType; // normal wind rose
 				        $wrtext = langtransstr('Wind from') ." " . langtransstr($dirlabel);
-						if ( (strip_units($avgspd) + strip_units($gstspd) < 0.1 ) and
+						if ( ((float)strip_units($avgspd) + (float)strip_units($gstspd) < 0.1 ) and
 						     ($wrCalm <> '') ) { // use calm instead
 						  $wr = $imagesDir . $wrCalm;
 						  $wrtext = $bftspeedtext;
@@ -1162,7 +1182,7 @@ function fixup_date ($WDdate) {
 // i.e. '30.01 in. Hg' becomes '30.01'
 function strip_units ($data) {
   preg_match('/([\d\,\.\+\-]+)/',$data,$t);
-  return $t[1];
+  return (float) $t[1]; // Wim suggestion 26-Jul-2018
 }
 
 //=========================================================================

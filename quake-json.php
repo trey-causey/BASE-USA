@@ -18,8 +18,11 @@
 // Version 2.00 - 10-May-2018 - rewritten to use Leaflet/OpenStreetMaps + others for display
 // Version 2.01 - 29-Oct-2019 - adapted for Phillippines display of earthquake faults
 // Version 3.00 - 13-Nov-2019 - generalized for optional dislay of faults/tectonic plates from multiple sources
+// Version 3.01 - 26-May-2020 - fix cache issue for HTTP/2 returns from USGS site
+// Version 3.02 - 27-Jun-2020 - add name translation to fix Hawaiian names (replace 'P?hala' with 'P&amacr;hala' )
+// Version 3.03 - 30-Jun-2020 - add $SITE['USGStranslate'] support to augment replacement of location names
 
-  $Version = 'quake-json.php V3.00 - 13-Nov-2019';
+  $Version = 'quake-json.php V3.03 - 30-Jun-2020';
 //  error_reporting(E_ALL);  // uncomment to turn on full error reporting
 //
 // script available at http://saratoga-weather.org/scripts.php
@@ -166,6 +169,19 @@ $SITE['mapboxAPIkey'] = '-replace-this-with-your-API-key-here-';
 # 'BGS' convers the UK (England, Wales, Scotland, Northern Ireland) 
 #
  $plateDisplay = true; // =true; show tectonic plates , =false; suppress display of tectonic plates
+ 
+# optional location name translation - use only &#nnnn; or &#xnnnn; form for HTML validation
+# and NOT the &{name}; format.. it will cause the validator.w3c.org to incorrectly cite them
+# as HTML errors (even if the page displays correctly);
+#
+# see https://www.w3schools.com/charsets/ref_utf_latin_extended_a.asp for a list of numeric/hex entities
+#
+# Note: a $SITE['USGStranslate'] array in Settings.php will be merged with this set - do your customization there
+#
+ $nameTrans = array(   
+ 'P?hala' => 'P&#257;hala',
+ 'Or?ova' => 'Or&#351;ova',
+ );
 	
 // end of settings -------------------------------------------------------------
 
@@ -203,6 +219,8 @@ if (isset($SITE['distanceDisplay'])) {$distanceDisplay = $SITE['distanceDisplay'
 if (isset($SITE['mapboxAPIkey']))    {$mapboxAPIkey = $SITE['mapboxAPIkey']; }
 if (isset($SITE['faultDisplay']))    {$faultDisplay = $SITE['faultDisplay']; }
 if (isset($SITE['plateDisplay']))    {$plateDisplay = $SITE['plateDisplay']; }
+if (isset($SITE['USGStranslate']) and is_array($SITE['USGStranslate']))   
+      {$nameTrans = array_merge($nameTrans,$SITE['USGStranslate']); }
 // end of overrides from Settings.php
 
 # Shim function if run outside of AJAX/PHP template set
@@ -493,13 +511,14 @@ if (file_exists($cacheName) and filemtime($cacheName) + $refetchSeconds > time()
 	  if (preg_match("|^HTTP\/\S+ (.*)\r\n|",$rawhtml,$matches)) {
 	    $RC = trim($matches[1]);
 	  }
-	  if(!preg_match('|200 |',$RC)) {
+	  if(!preg_match('|200|',$RC)) {
          print "<!-- fetch returns RC='".$RC."' for $fileName -->\n";
 	  } else {
 		$fp = fopen($cacheName, "w");
 		if ($fp) {
 		  $write = fputs($fp, $rawhtml);
 		  fclose($fp);
+			print "<!-- cache file $cacheName updated -->\n";
 		} else {
 		  print "<!-- unable to write cache file $cacheName -->\n";
 		}
@@ -523,6 +542,12 @@ if (file_exists($cacheName) and filemtime($cacheName) + $refetchSeconds > time()
 	$utimestamp = time();  // get unix time for date
 	print "<!-- using now as last modified date ".gmdate($timeFormat,$utimestamp)." UTC -->\n";
   }
+	$nameTransFrom = array();
+	$nameTransTo   = array();
+	foreach ($nameTrans as $from => $to) {
+		$nameTransFrom[] = $from;
+		$nameTransTo[]   = $to;
+	}
 
   $updatedUTC = langtransstr('Update time') . " = " . gmdate($timeFormat,$utimestamp);
   $updated = langtransstr('Update time') . " = " . date($timeFormat,$utimestamp);
@@ -698,7 +723,7 @@ if (file_exists($cacheName) and filemtime($cacheName) + $refetchSeconds > time()
 	  if(isset($matches[2])) {
 		  $kmLoc = $matches[1];
 		  $locDir = langtransstr($matches[2]);
-		  $locText = $matches[3];
+		  $locText = str_replace($nameTransFrom,$nameTransTo,$matches[3]);
 		  $miLoc = round($kmLoc/1.609344,0);
 		  $location = $distanceDisplay; // load template
 		  $location = preg_replace('|mi|',"$miLoc mi",$location);
@@ -767,6 +792,7 @@ if (file_exists($cacheName) and filemtime($cacheName) + $refetchSeconds > time()
 	    $doneHeader = 1;
 	  } // end doneHeader
 // --------------- customize HTML if you like -----------------------
+      $location = str_replace($nameTransFrom,$nameTransTo,$location);
 	    print "$tStatus
 <tr>
   <td align=\"left\" style=\"white-space:normal\"><a href=\"$mapURL\"$tgt>$location</a></td>
